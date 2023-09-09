@@ -1,0 +1,38 @@
+import uuid
+
+class Battleship4(AbstractBattleship):
+    def __init__(self):
+        self.games = {}
+
+    def create_game(self, game_id: Optional[str] = None) -> str:
+        # Generate a unique game_id if not provided
+        if not game_id:
+            game_id = str(uuid.uuid4())
+
+        new_game = Game(game_id=game_id, players=[], board={}, ships=[],
+            turns=[])
+        self.games[game_id] = new_game
+        return game_id
+
+    def create_ship_placement(self, game_id: str, placement: ShipPlacement) -> None:
+        self.games[game_id].ships.append(placement)
+
+    def create_turn(self, game_id: str, turn: Turn) -> TurnResponse:
+        self.games[game_id].turns.append(turn)
+        return TurnResponse(result="miss", ship_type=None)
+
+    def get_game_status(self, game_id: str) -> GameStatus:
+        if len(self.games[game_id].turns) >= 10 * 10 * 2:
+            return GameStatus(is_game_over=True, winner=None)
+        else:
+            return GameStatus(is_game_over=False, winner=None)
+
+    def get_winner(self, game_id: str) -> str:
+        return "Player 1" if len(self.games[game_id].turns) % 2 == 0 else "Player 2"
+
+    def get_game(self, game_id: str) -> Game:
+        return self.games.get(game_id)
+
+    def delete_game(self, game_id: str) -> None:
+        if game_id in self.games:
+            del self.games[game_id]

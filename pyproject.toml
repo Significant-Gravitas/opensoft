@@ -32,6 +32,7 @@ uvicorn = "^0.23.2"
 pyperclip = "^1.8.2"
 astor = "^0.8.1"
 pydevd-pycharm = "^232.9559.58"
+pylint = "^2.17.5"
 
 
 [tool.poetry.group.dev.dependencies]

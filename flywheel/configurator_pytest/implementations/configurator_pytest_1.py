@@ -9,7 +9,17 @@ from flywheel.configurator_pytest.abstract_class import AbstractConfiguratorPyte
 
 class ConfiguratorPytest1(AbstractConfiguratorPytest):
 
-    def prepare_for_parameterization(self, metafunc, folder) -> Tuple[str, List[type]]:
+    def setup_parameterization(self, metafunc):
+        script_folder = os.path.dirname(str(metafunc.definition.fspath))
+        script_folder_relative = os.path.relpath(script_folder, os.getcwd())
+        script_folder_parent_relative = os.path.dirname(script_folder_relative)
+        # folder = metafunc.config.args[0] if metafunc.config.args and metafunc.config.args[0].split("/")[-1] != "flywheel" else script_folder_parent_relative
+
+        module, to_parameterize = self._prepare_for_parameterization(metafunc, script_folder_parent_relative)
+
+        return module, to_parameterize
+
+    def _prepare_for_parameterization(self, metafunc, folder) -> Tuple[str, List[type]]:
         # Discover implementations
         implementations = self._discover_implementations(folder)
 
@@ -21,6 +31,7 @@ class ConfiguratorPytest1(AbstractConfiguratorPytest):
         module = folder.split('/')[-1]
 
         return module, to_parameterize
+
     def _convert_to_camel_case(self, s: str) -> str:
         parts = s.split('_')
         return ''.join(part.capitalize() for part in parts)

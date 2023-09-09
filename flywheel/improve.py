@@ -2,8 +2,8 @@ import click
 import sys
 import pyperclip
 
-from flywheel.runner_pytest.implementations.runner_pytest_1 import RunnerPytest1
 from flywheel.utils.common import print_file_content, IMPLEMENTATION_NUMBER
+from flywheel.utils.pytest_failure import get_nth_failure
 
 failures = []
 
@@ -24,10 +24,10 @@ def run(module, command, pick_item, result_only):
     else:
         result_str = print_file_content(f"flywheel/{module}/abstract_class.py")
         result_str += print_file_content(
-            f"flywheel/{module}/implementations/{module}_{1}.py"
+            f"flywheel/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
         )
-        result_str += print_file_content(f"flywheel/{module}/conftest.py")
-        result_str += RunnerPytest1().get_pytest_failure(n=n, path=f"flywheel/{module}")[0]
+        result_str += print_file_content(f"flywheel/{module}/tests/conftest.py")
+        result_str += get_nth_failure(n, include_stdout)
         result_str += """
 User:
 Modify the class in order for the test to pass.

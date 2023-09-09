@@ -58,3 +58,14 @@ def game_over_fixture(battleship, initialized_game_id):
 
     # At the end of this fixture, the game should be over
     return initialized_game_id
+
+# def pytest_generate_tests(metafunc):
+#     configurator = ConfiguratorPytest1()
+#     module, to_parameterize = configurator.setup_parameterization(metafunc)
+#     metafunc.parametrize(module, to_parameterize, indirect=True)
+#
+# def pytest_addoption(parser):
+#     parser.addoption(
+#         "--implementation",
+#         action="store",
+#         default="all",)

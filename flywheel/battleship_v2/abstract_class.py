@@ -1,107 +1,107 @@
-from abc import ABC, abstractmethod
-from typing import Optional
-
-from pydantic import BaseModel, validator
-
-
-# Models for the request and response payloads
-class ShipPlacement(BaseModel):
-    ship_type: str
-    start: dict  # {"row": int, "column": str}
-    direction: str
-
-    @validator("start")
-    def validate_start(cls, start):
-        row, column = start.get("row"), start.get("column")
-
-        if not (1 <= row <= 10):
-            raise ValueError("Row must be between 1 and 10 inclusive.")
-
-        if column not in list("ABCDEFGHIJ"):
-            raise ValueError("Column must be one of A, B, C, D, E, F, G, H, I, J.")
-
-        return start
+from sqlmodel import SQLModel, Field, Relationship
+from uuid import UUID, uuid4
+from typing import List, Optional
+from enum import Enum
 
 
-class Turn(BaseModel):
-    target: dict  # {"row": int, "column": str}
+class Direction(str, Enum):
+    HORIZONTAL = "horizontal"
+    VERTICAL = "vertical"
 
 
-class TurnResponse(BaseModel):
-    result: str
-    ship_type: Optional[str]  # This would be None if the result is a miss
+class ShipType(str, Enum):
+    CARRIER = "carrier"
+    BATTLESHIP = "battleship"
+    CRUISER = "cruiser"
+    SUBMARINE = "submarine"
+    DESTROYER = "destroyer"
 
 
-class GameStatus(BaseModel):
-    is_game_over: bool
-    winner: Optional[str]
+class TurnResult(str, Enum):
+    HIT = "hit"
+    MISS = "miss"
 
 
-from typing import List
+class Player(SQLModel, table=True):
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    name: str
+    games: List["Game"] = Relationship(back_populates="players")
 
 
-class Game(BaseModel):
-    game_id: str
-    players: List[str]
-    board: dict  # This could represent the state of the game board, you might need to flesh this out further
-    ships: List[ShipPlacement]  # List of ship placements for this game
-    turns: List[Turn]  # List of turns that have been taken
+class Game(SQLModel, table=True):
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    player_ids: List[UUID] = Field()
+    players: List[Player] = Relationship(back_populates="games")
+    turns: List["Turn"] = Relationship(back_populates="game")
+    ship_placements: List["ShipPlacement"] = Relationship(back_populates="game")
+    is_game_over: bool = False
+    winner_id: Optional[UUID]
 
 
-class AbstractBattleshipV2(ABC):
-    SHIP_LENGTHS = {
-        "carrier": 5,
-        "battleship": 4,
-        "cruiser": 3,
-        "submarine": 3,
-        "destroyer": 2,
-    }
+class ShipPlacement(SQLModel, table=True):
+    id: int = Field(primary_key=True, auto_increment=True)
+    game_id: UUID = Field(foreign_key="game.id")
+    game: Optional[Game] = Relationship(back_populates="ship_placements")
+    ship_type: ShipType
+    start_row: int
+    start_column: str
+    direction: Direction
 
+
+class Turn(SQLModel, table=True):
+    id: int = Field(primary_key=True, auto_increment=True)
+    game_id: UUID = Field(foreign_key="game.id")
+    game: Optional[Game] = Relationship(back_populates="turns")
+    target_row: int
+    target_column: str
+    result: TurnResult
+    hit_ship_type: Optional[ShipType]
+
+
+class TurnResponse(SQLModel):
+    result: str  # Either "hit" or "miss"
+    ship_type: str  # The type of ship hit, or None if the result is a "miss"
+
+class AbstractBattleship(ABC):
     @abstractmethod
-    def create_ship_placement(self, game_id: str, placement: ShipPlacement) -> None:
+    def create_game(self, player_ids: List[UUID]) -> UUID:
         """
-        Place a ship on the grid.
+        Create a new game with the specified players.
+        Returns the game_id.
         """
         pass
 
     @abstractmethod
-    def create_turn(self, game_id: str, turn: Turn) -> TurnResponse:
+    def create_ship_placement(self, game_id: UUID, placement: ShipPlacement) -> None:
         """
-        Players take turns to target a grid cell.
-        """
-        pass
-
-    @abstractmethod
-    def get_game_status(self, game_id: str) -> GameStatus:
-        """
-        Check if the game is over and get the winner if there's one.
+        Place a ship on the grid for the specified game.
         """
         pass
 
     @abstractmethod
-    def get_winner(self, game_id: str) -> str:
+    def create_turn(self, game_id: UUID, turn: Turn) -> TurnResponse:
         """
-        Get the winner of the game.
-        """
-        pass
-
-    @abstractmethod
-    def get_game(self) -> Game:
-        """
-        Retrieve the state of the game.
+        Players take turns to target a grid cell in the specified game.
         """
         pass
 
     @abstractmethod
-    def delete_game(self, game_id: str) -> None:
+    def get_game_status(self, game_id: UUID) -> GameStatus:
         """
-        Delete a game given its ID.
+        Check if the game is over and get the winner if there's one, for the specified game.
         """
         pass
 
     @abstractmethod
-    def create_game(self) -> None:
+    def get_game(self, game_id: UUID) -> Game:
         """
-        Create a new game.
+        Retrieve the state of the specified game.
+        """
+        pass
+
+    @abstractmethod
+    def delete_game(self, game_id: UUID) -> None:
+        """
+        Delete a game given its UUID.
         """
         pass

@@ -1,7 +1,6 @@
 import os
 import re
 
-
 MODULE = "battleship"
 
 

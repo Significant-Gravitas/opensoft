@@ -1,7 +1,7 @@
-no BaseModel allowed, since we want SQLModel
-
 "This is too complex, are there places where you can assume a has one or has many relationships instead of has many or many to many to many ?"
 
 No dict type is allowed
 
 Put as much validations as you can
+
+no uuids, just regular autoincrement ids

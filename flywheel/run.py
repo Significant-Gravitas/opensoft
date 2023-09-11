@@ -8,7 +8,7 @@ failures = []
 IMPLEMENTATION_NUMBER = 1
 
 
-def load_content_for_improve(module, pick_item):
+def load_content_for_pass_tests_strict(module, pick_item):
     abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
     implementation = print_file_content(
         f"flywheel/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
@@ -38,7 +38,44 @@ I won't modify the tests or the abstract class or add any attributes to the exis
     return result_str
 
 
-def load_content_for_test(module):
+def load_content_for_pass_tests(module, pick_item):
+    abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
+    implementation = print_file_content(
+        f"flywheel/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
+    )
+    fixtures = print_file_content(f"flywheel/{module}/conftest.py")
+    pytest_failure = RunnerPytest1().get_pytest_failure(
+        n=int(pick_item), path=f"flywheel/{module}"
+    )
+
+    if pytest_failure[0] is None:
+        raise Exception("No failure found")
+
+    instructions = """
+User:
+Modify the class or the tests in order for the test to pass, depending on whether the test makes sense or not.
+Assistant:
+"""
+    result_str = (
+        abstract_class + implementation + fixtures + pytest_failure[0] + instructions
+    )
+
+    if len(result_str) > 12000:
+        result_str = implementation + fixtures + pytest_failure[0] + instructions
+
+    return result_str
+
+
+def load_content_for_remove_first_test(module, pick_item):
+
+    test_failure, test_code = RunnerPytest1().get_pytest_failure(
+        n=int(pick_item), path=f"flywheel/{module}"
+    )
+    print(f"You're saying you want to remove this test ?:{test_code}")
+    return test_code
+
+
+def load_content_for_add_tests(module):
     product_requirements = print_file_content(
         f"flywheel/{module}/product_requirements.txt"
     )
@@ -59,6 +96,53 @@ Ok I won't include negative tests, here are a few tests that are missing:
     return result_str
 
 
+def load_content_for_remove_tests(module):
+    product_requirements = print_file_content(
+        f"flywheel/{module}/product_requirements.txt"
+    )
+    user_stories = print_file_content(f"flywheel/{module}/user_stories.txt")
+    abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
+    fixtures = print_file_content(f"flywheel/{module}/conftest.py")
+    test_positive = print_file_content(f"flywheel/{module}/tests/test_{module}.py")
+    instructions = """
+INSTRUCTIONS:
+What are some tests you think don't make sense ? Please remove them
+ASSISTANT:
+Here are the tests you should be removing and why:
+"""
+    result_str = (
+        product_requirements
+        + user_stories
+        + abstract_class
+        + fixtures
+        + test_positive
+        + instructions
+    )
+
+    if len(result_str) > 12000:
+        print("Prompt Length Before:", len(result_str))
+        result_str = (
+            user_stories + abstract_class + fixtures + test_positive + instructions
+        )
+        if len(result_str) > 12000:
+            raise Exception("Prompt too long")
+
+    return result_str
+
+
+def load_content_for_compress_tests(module):
+    abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
+    fixtures = print_file_content(f"flywheel/{module}/conftest.py")
+    test_positive = print_file_content(f"flywheel/{module}/tests/test_{module}.py")
+    instructions = """
+INSTRUCTIONS:
+Can you make these tests shorter by adding fixtures ? Also try to reuse the same fixtures
+"""
+    result_str = abstract_class + fixtures + test_positive + instructions
+
+    return result_str
+
+
 @click.command()
 @click.argument("module")
 @click.argument("command")
@@ -71,10 +155,18 @@ Ok I won't include negative tests, here are a few tests that are missing:
     help="This is an optional argument",
 )
 def run(module, command, pick_item, result_only):
-    if command == "improve":
-        result_str = load_content_for_improve(module, 0)
-    elif command == "test":
-        result_str = load_content_for_test(module)
+    if command == "pass_tests_strict":
+        result_str = load_content_for_pass_tests_strict(module, 0)
+    elif command == "pass_tests":
+        result_str = load_content_for_pass_tests(module, 0)
+    elif command == "add_tests":
+        result_str = load_content_for_add_tests(module)
+    elif command == "remove_tests":
+        result_str = load_content_for_remove_tests(module)
+    elif command == "remove_first_test":
+        result_str = load_content_for_remove_first_test(module, 0)
+    elif command == "compress_tests":
+        result_str = load_content_for_compress_tests(module)
     else:
         raise ValueError("Unknown command")
 

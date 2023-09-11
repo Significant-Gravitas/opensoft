@@ -78,7 +78,11 @@ class RunnerPytest1(AbstractRunnerPytest):
                 return None
             test_name = test_name_match.group(1)
 
-            test_file_path = report.longrepr.reprcrash.path
+            test_file_path = (
+                report.longrepr.reprcrash.path
+                if hasattr(report.longrepr, "reprcrash")
+                else str(report.longrepr.filename)
+            )
 
             with open(test_file_path, "r") as f:
                 lines = f.readlines()

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List, Optional
-from uuid import UUID, uuid4
 
 from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
@@ -36,21 +35,21 @@ class GameStatusEnum(str, Enum):
 
 
 class Player(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    id: int = Field(default=None, primary_key=True)
     name: str
 
 
 class Game(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    player1_id: UUID = Field(foreign_key="player.id")
-    player2_id: UUID = Field(foreign_key="player.id")
+    id: int = Field(default=None, primary_key=True)
+    player1_id: int = Field(foreign_key="player.id")
+    player2_id: int = Field(foreign_key="player.id")
     is_game_over: bool = Field(default=False)
-    winner_id: Optional[UUID] = Field(None, foreign_key="player.id")
+    winner_id: Optional[int] = Field(None, foreign_key="player.id")
 
 
 class ShipPlacement(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    game_id: UUID = Field(foreign_key="game.id")
+    id: int = Field(default=None, primary_key=True)
+    game_id: int = Field(foreign_key="game.id")
     ship_type: ShipType
     start_row: int
     start_column: str
@@ -66,8 +65,8 @@ class ShipPlacement(SQLModel, table=True):
 
 
 class Turn(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    game_id: UUID = Field(foreign_key="game.id")
+    id: int = Field(default=None, primary_key=True)
+    game_id: int = Field(foreign_key="game.id")
     target_row: int
     target_column: str
     result: TurnResult
@@ -76,7 +75,7 @@ class Turn(SQLModel, table=True):
 
 class GameStatus(BaseModel):
     is_game_over: bool
-    winner_id: Optional[UUID]
+    winner_id: Optional[int]
     status: GameStatusEnum
 
 
@@ -91,38 +90,54 @@ class AbstractBattleshipV2(ABC, BaseClass):
 
     @classmethod
     @abstractmethod
-    def create_game(player_ids: List[UUID]) -> UUID:
+    def create_game(cls, player_ids: List[int]) -> int:
 
         pass
 
     @classmethod
     @abstractmethod
-    def create_ship_placement(game_id: UUID, placement: ShipPlacement) -> None:
+    def create_ship_placement(cls, game_id: int, placement: ShipPlacement) -> None:
 
         pass
 
     @classmethod
     @abstractmethod
-    def create_turn(game_id: UUID, turn: Turn) -> TurnResult:
+    def create_turn(cls, game_id: int, turn: Turn) -> TurnResult:
 
         pass
 
     @classmethod
     @abstractmethod
-    def get_game_status(game_id: UUID) -> GameStatus:
+    def get_game_status(cls, game_id: int) -> GameStatus:
 
         pass
 
     @classmethod
     @abstractmethod
-    def get_game(game_id: UUID) -> Game:
+    def get_game(cls, game_id: int) -> Game:
 
         pass
 
     @classmethod
     @abstractmethod
-    def delete_game(game_id: UUID) -> None:
+    def delete_game(cls, game_id: int) -> None:
 
+        pass
+
+    @classmethod
+    @abstractmethod
+    def delete_game(cls, game_id: int) -> None:
+
+        pass
+
+    @classmethod
+    @abstractmethod
+    def create_player(cls, name: str) -> int:
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_player(cls, player_id: int) -> Player:
         pass
 
 

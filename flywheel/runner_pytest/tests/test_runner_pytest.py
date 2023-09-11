@@ -3,7 +3,6 @@ import os
 from contextlib import redirect_stdout
 
 
-
 def test_no_stdout_from_run_tests(runner_pytest):
     f = io.StringIO()
     with redirect_stdout(f):

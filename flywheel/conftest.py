@@ -32,8 +32,10 @@ def pytest_runtest_setup(item):
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_db_session():
+    SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
     yield
+    SQLModel.metadata.drop_all(engine)
 
 
 @pytest.fixture(scope="function", autouse=True)

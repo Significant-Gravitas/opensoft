@@ -26,26 +26,24 @@ class Game:
         self.board = board
         self.ships = ships
         self.turns = turns
-        self.ship_placements = []  # Added ship_placements attribute
+        self.ship_placements = []
 
 
 class Battleship2(AbstractBattleship):
     def __init__(self):
-        self.games = {}  # Dictionary to store games using game_id as key.
+        self.games = {}
 
     def create_game(self) -> str:
         game_id = str(len(self.games) + 1)
 
-        # Populate required fields of Game instance
         game = Game(
             game_id=game_id,
-            players=[],  # or some initial value
-            board={},  # Now the board will be a dictionary
-            ships=[],  # or some initial value
+            players=[],
+            board={},
+            ships=[],
             turns=[],
         )
 
-        # Initialize ships_to_be_placed for this game
         game.ships_to_be_placed = set(self.SHIP_LENGTHS.keys())
 
         self.games[game_id] = game
@@ -55,7 +53,6 @@ class Battleship2(AbstractBattleship):
         if ship_placement.ship_type not in self.SHIP_LENGTHS:
             raise ValueError("Invalid ship type")
 
-        # Validate ship type
         start_row = ship_placement.start["row"]
         start_col = ord(ship_placement.start["column"]) - ord("A")
         ship_size = self.SHIP_LENGTHS[ship_placement.ship_type]
@@ -70,38 +67,33 @@ class Battleship2(AbstractBattleship):
 
         if ship_placement.ship_type not in self.SHIP_LENGTHS:
             raise ValueError("Invalid ship type")
-        # Before adding the ship, check if the ship's direction is valid
+
         if ship_placement.direction not in ["horizontal", "vertical"]:
             raise ValueError("Invalid ship direction")
 
-        # Before adding the ship, check for overlaps
         if self._is_ship_overlap(game_id, ship_placement):
             raise ValueError("The ship overlaps with an existing ship.")
 
-        # Check if ship is already placed
         if ship_placement.ship_type in self.games[game_id].ships_to_be_placed:
             self.games[game_id].ships_to_be_placed.remove(ship_placement.ship_type)
         else:
-            # Updated error message
+
             raise ValueError("All ships are already placed. Cannot place more ships.")
 
         self.games[game_id].ship_placements.append(ship_placement)
         self.games[game_id].ships.append(ship_placement)
 
     def create_turn(self, game_id: str, turn: Turn) -> TurnResponse:
-        # Check if all ships are placed
+
         if self.games[game_id].ships_to_be_placed:
             raise ValueError("All ships must be placed before starting turns")
 
         self.games[game_id].turns.append(turn)
 
-        # Check if the targeted position matches any ship placements.
         for ship_placement in self.games[game_id].ship_placements:
             start_row = ship_placement.start["row"]
             start_col = ord(ship_placement.start["column"]) - ord("A")
 
-            # Here, I'm assuming fixed ship sizes based on their type,
-            # but these can be loaded from a configuration if needed.
             ship_sizes = {
                 "carrier": 5,
                 "battleship": 4,
@@ -128,7 +120,7 @@ class Battleship2(AbstractBattleship):
                             result="hit", ship_type=ship_placement.ship_type
                         )
 
-            else:  # Vertical
+            else:
                 end_row = start_row + ship_sizes[ship_placement.ship_type] - 1
                 if (
                     ord(turn.target["column"]) - ord("A") == start_col
@@ -141,16 +133,13 @@ class Battleship2(AbstractBattleship):
                         result="hit", ship_type=ship_placement.ship_type
                     )
 
-        # If no ship is hit, mark it as a miss.
         self.games[game_id].board[
             (turn.target["row"], ord(turn.target["column"]) - ord("A"))
         ] = "miss"
         return TurnResponse(result="miss", ship_type=None)
 
     def _is_ship_sunk(self, game_id: str, ship_type: str) -> bool:
-        """
-        Check if a specific ship has been sunk by counting the hits on that ship's placements.
-        """
+
         ship_size = self.SHIP_LENGTHS[ship_type]
         hits_on_ship = sum(
             1
@@ -175,20 +164,17 @@ class Battleship2(AbstractBattleship):
         return self.games.get(game_id, None)
 
     def get_game_status(self, game_id: str) -> GameStatus:
-        # If all turns have been made (assuming 100 turns in a 10x10 grid for 2 players)
+
         if len(self.games[game_id].turns) >= 100:
             return GameStatus.OVER
         return GameStatus.ONGOING
 
     def get_winner(self, game_id: str) -> str:
-        # This is still a mock-up. You should determine the winner based on the hits and misses
-        # For now, let's say Player 1 always wins
+
         return "Player 1"
 
     def _is_ship_overlap(self, game_id: str, ship_placement: ShipPlacement) -> bool:
-        """
-        Check if a ship overlaps with existing ship placements.
-        """
+
         start_row = ship_placement.start["row"]
         start_col = ord(ship_placement.start["column"]) - ord("A")
         ship_size = self.SHIP_LENGTHS[ship_placement.ship_type]
@@ -207,7 +193,7 @@ class Battleship2(AbstractBattleship):
                 ):
                     return True
 
-        else:  # Vertical
+        else:
             end_row = start_row + ship_size
             for existing_ship in self.games[game_id].ship_placements:
                 existing_start_row = existing_ship.start["row"]

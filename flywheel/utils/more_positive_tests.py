@@ -1,5 +1,4 @@
-import pyperclip  # Ensure you've installed this library
-
+import pyperclip
 from utils.common import MODULE, print_file_content
 
 if __name__ == "__main__":
@@ -13,5 +12,5 @@ Do not include negative tests, they're already covered in another folder.
 ASSISTANT:
 Ok I won't include negative tests, here is a few tests that are misssing:
 """
-# Copy the content to the clipboard
+
 pyperclip.copy(result_str)

@@ -7,14 +7,13 @@ from flywheel.battleship.abstract_class import ShipPlacement, Turn
 def test_ship_placement_out_of_bounds(battleship):
     game_id = battleship.create_game()
 
-    # Bypass the instantiation error by catching it.
     try:
         out_of_bounds_ship = ShipPlacement(
             ship_type="battleship",
             start={"row": 11, "column": "Z"},
             direction="horizontal",
         )
-    except ValidationError:  # Use the directly imported ValidationError class
+    except ValidationError:
         pass
     else:
         with pytest.raises(ValueError, match="Placement out of bounds"):
@@ -52,9 +51,7 @@ def test_cant_hit_before_ships_placed(battleship):
 
 
 def test_cant_place_ship_after_all_ships_placed(battleship, initialized_game_id):
-    game = battleship.get_game(
-        initialized_game_id
-    )  # get the state of the initialized game
+    game = battleship.get_game(initialized_game_id)
     additional_ship = ShipPlacement(
         ship_type="carrier", start={"row": 2, "column": "E"}, direction="horizontal"
     )
@@ -68,7 +65,6 @@ def test_cant_place_ship_after_all_ships_placed(battleship, initialized_game_id)
 def test_ship_placement_invalid_direction(battleship):
     game_id = battleship.create_game()
 
-    # Try placing a ship with a direction other than "horizontal" or "vertical"
     with pytest.raises(ValueError, match="Invalid ship direction"):
         invalid_direction_ship = ShipPlacement(
             ship_type="battleship",
@@ -90,7 +86,6 @@ def test_invalid_ship_type(battleship):
 def test_ship_placement_extends_beyond_boundaries(battleship):
     game_id = battleship.create_game()
 
-    # Try placing a battleship which would extend beyond the boundary when placed horizontally
     with pytest.raises(ValueError, match="Ship extends beyond board boundaries"):
         ship_extending_beyond = ShipPlacement(
             ship_type="battleship",
@@ -99,7 +94,6 @@ def test_ship_placement_extends_beyond_boundaries(battleship):
         )
         battleship.create_ship_placement(game_id, ship_extending_beyond)
 
-    # Try placing a cruiser which would extend beyond the boundary when placed vertically
     with pytest.raises(ValueError, match="Ship extends beyond board boundaries"):
         ship_extending_beyond = ShipPlacement(
             ship_type="cruiser", start={"row": 9, "column": "A"}, direction="vertical"

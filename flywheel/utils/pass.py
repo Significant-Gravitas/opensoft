@@ -1,13 +1,12 @@
 import sys
 
-import pyperclip  # Ensure you've installed this library
-
+import pyperclip
 from utils.common import (
     IMPLEMENTATION_NUMBER,
     MODULE,
     get_nth_failure,
     print_file_content,
-    result_only, MODULE,
+    result_only,
 )
 
 failures = []
@@ -39,5 +38,5 @@ Modify the class or the test in order for the test to pass.
 Assistant:
 Here is my suggestion and code for the test to pass
 """
-    # Copy the content to the clipboard
+
     pyperclip.copy(result_str)

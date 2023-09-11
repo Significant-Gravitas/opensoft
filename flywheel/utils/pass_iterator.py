@@ -1,6 +1,6 @@
 import sys
 
-import pyperclip  # Ensure you've installed this library
+import pyperclip
 from util.common import get_nth_failure, print_file_content, result_only
 from utils.create_more_tests_2 import IMPLEMENTATION_NUMBER, MODULE
 
@@ -34,5 +34,5 @@ Assistant:
 Here is my suggestion to modify the class + the code that comes with it.
 I won't modify the tests or the abstract class or add any attributes to the existing classes
 """
-    # Copy the content to the clipboard
+
     pyperclip.copy(result_str)

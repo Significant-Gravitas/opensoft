@@ -1,13 +1,12 @@
 import sys
 
-import pyperclip  # Ensure you've installed this library
-
+import pyperclip
 from utils.common import (
     IMPLEMENTATION_NUMBER,
     MODULE,
     get_nth_failure,
     print_file_content,
-    result_only, MODULE,
+    result_only,
 )
 
 failures = []
@@ -42,10 +41,9 @@ Assistant:
 Here is my suggestion to modify the class + the code that comes with it.
 I won't modify the tests or the abstract class or add any attributes to the existing classes
 """
-    # Copy the content to the clipboard
+
     from dotenv import load_dotenv
 
-    # Load environment variables from .env file
     load_dotenv()
 
     pyperclip.copy(result_str)

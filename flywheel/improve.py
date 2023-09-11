@@ -1,17 +1,19 @@
-import click
 import sys
+
+import click
 import pyperclip
 
-from flywheel.utils.common import print_file_content, IMPLEMENTATION_NUMBER
+from flywheel.utils.common import IMPLEMENTATION_NUMBER, print_file_content
 from flywheel.utils.pytest_failure import get_nth_failure
 
 failures = []
 
+
 @click.command()
-@click.argument('module')
-@click.argument('command')
-@click.option('--pick_item', '-o', default=None, help='This is an optional argument')
-@click.option('--result_only', '-o', is_flag=None, help='This is an optional argument')
+@click.argument("module")
+@click.argument("command")
+@click.option("--pick_item", "-o", default=None, help="This is an optional argument")
+@click.option("--result_only", "-o", is_flag=None, help="This is an optional argument")
 def run(module, command, pick_item, result_only):
     no_stdout_arg = "no_stdout"
 
@@ -35,15 +37,13 @@ Assistant:
 Here is my suggestion to modify the class + the code that comes with it.
 I won't modify the tests or the abstract class or add any attributes to the existing classes
 """
-    # Copy the content to the clipboard
+
     from dotenv import load_dotenv
 
-    # Load environment variables from .env file
     load_dotenv()
 
     pyperclip.copy(result_str)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

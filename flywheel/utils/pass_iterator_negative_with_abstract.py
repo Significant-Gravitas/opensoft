@@ -1,13 +1,11 @@
 import sys
 
-import pyperclip  # Ensure you've installed this library
-
 from utils.common import (
     IMPLEMENTATION_NUMBER,
     MODULE,
     get_nth_failure,
     print_file_content,
-    result_only, MODULE,
+    result_only,
 )
 
 failures = []

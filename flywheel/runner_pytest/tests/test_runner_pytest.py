@@ -1,7 +1,8 @@
 import io
-from contextlib import redirect_stdout
-import pytest
 import os
+from contextlib import redirect_stdout
+
+
 
 def test_no_stdout_from_run_tests(runner_pytest):
     f = io.StringIO()
@@ -12,12 +13,12 @@ def test_no_stdout_from_run_tests(runner_pytest):
     output = f.getvalue()
     assert output == ""
 
+
 def test_retrieve_test_code(runner_pytest):
-    # Replace with a path to a test that is expected to fail
-    # absolute_path = os.path.abspath(os.path.join(os.getcwd(),  ))
+
     _, test_code = runner_pytest.get_pytest_failure(n=0, path="flywheel/module_fixture")
     assert test_code is not None
-    # Replace with the expected part of the code
+
     expected_code_fragment = """def test_should_fail_one(module_fixture):"""
 
     assert expected_code_fragment in test_code
@@ -26,14 +27,14 @@ def test_retrieve_test_code(runner_pytest):
 
     assert non_expected_code_fragment not in test_code
 
+
 def test_retrieve_second_test_code(runner_pytest):
     _, test_code = runner_pytest.get_pytest_failure(n=1, path="flywheel/module_fixture")
     assert test_code is not None
 
-    expected_method_code = """@pytest.mark.mock
+    expected_method_code = """    @pytest.mark.mock
     def test_should_fail_two(module_fixture):
     
-        # The following lines are just filler and won't affect the test outcome.
         dummy_var_1 = 1
         dummy_var_2 = 2
         dummy_var_3 = 3
@@ -46,13 +47,8 @@ def test_retrieve_second_test_code(runner_pytest):
         dummy_var_10 = 10
     
         dummy_list = [dummy_var_1, dummy_var_2, dummy_var_3]
-        dummy_dict = {
-            "key1": dummy_var_4,
-            "key2": dummy_var_5,
-            "key3": dummy_var_6
-        }
+        dummy_dict = {"key1": dummy_var_4, "key2": dummy_var_5, "key3": dummy_var_6}
     
-        # More dummy operations
         dummy_list.append(dummy_var_7)
         dummy_list.extend([dummy_var_8, dummy_var_9])
         dummy_dict["key4"] = dummy_var_10
@@ -69,13 +65,8 @@ def test_retrieve_second_test_code(runner_pytest):
         dummy_var_10 = 10
     
         dummy_list = [dummy_var_1, dummy_var_2, dummy_var_3]
-        dummy_dict = {
-            "key1": dummy_var_4,
-            "key2": dummy_var_5,
-            "key3": dummy_var_6
-        }
+        dummy_dict = {"key1": dummy_var_4, "key2": dummy_var_5, "key3": dummy_var_6}
     
-        # More dummy operations
         dummy_list.append(dummy_var_7)
         dummy_list.extend([dummy_var_8, dummy_var_9])
         dummy_dict["key4"] = dummy_var_10
@@ -92,13 +83,8 @@ def test_retrieve_second_test_code(runner_pytest):
         dummy_var_10 = 10
     
         dummy_list = [dummy_var_1, dummy_var_2, dummy_var_3]
-        dummy_dict = {
-            "key1": dummy_var_4,
-            "key2": dummy_var_5,
-            "key3": dummy_var_6
-        }
+        dummy_dict = {"key1": dummy_var_4, "key2": dummy_var_5, "key3": dummy_var_6}
     
-        # More dummy operations
         dummy_list.append(dummy_var_7)
         dummy_list.extend([dummy_var_8, dummy_var_9])
         dummy_dict["key4"] = dummy_var_10
@@ -108,12 +94,16 @@ E       assert False"""
 
     assert expected_method_code in test_code
 
+
 def test_same_test_multiple_failures(runner_pytest):
     first_run = runner_pytest.get_pytest_failure(n=0, path="flywheel/module_fixture")
     second_run = runner_pytest.get_pytest_failure(n=0, path="flywheel/module_fixture")
     assert first_run == second_run
 
+
 def test_empty_test_file(runner_pytest):
-    failure_detail, test_code = runner_pytest.get_pytest_failure(n=0, path="flywheel/empty_test_file")
+    failure_detail, test_code = runner_pytest.get_pytest_failure(
+        n=0, path="flywheel/empty_test_file"
+    )
     assert failure_detail is None
     assert test_code is None

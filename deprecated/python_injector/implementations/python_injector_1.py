@@ -44,7 +44,9 @@ class Pythoninjector1(AbstractPythoninjector):
                     functions[n.name] = node
             elif isinstance(node, ast.ImportFrom):
                 for n in node.names:
-                    functions[node.module + '.' + n.name if node.module else n.name] = node
+                    functions[
+                        node.module + "." + n.name if node.module else n.name
+                    ] = node
 
         if not functions:
             raise ValueError("No functions found.")
@@ -150,12 +152,15 @@ class Pythoninjector1(AbstractPythoninjector):
 
         # Extract and handle import statements from the suggestion_functions
         import_nodes = [
-            node for key, node in suggestion_functions.items()
+            node
+            for key, node in suggestion_functions.items()
             if isinstance(node, (ast.Import, ast.ImportFrom))
         ]
         for import_node in import_nodes:
             new_body.append(import_node)
-            suggestion_functions.pop(import_node.name if hasattr(import_node, 'name') else import_node.module) # Remove import from suggestion_functions
+            suggestion_functions.pop(
+                import_node.name if hasattr(import_node, "name") else import_node.module
+            )  # Remove import from suggestion_functions
 
         for node in initial_ast.body:
             if isinstance(node, ast.ClassDef):
@@ -218,4 +223,3 @@ class Pythoninjector1(AbstractPythoninjector):
 
         node.body = new_class_body
         return node
-

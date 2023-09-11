@@ -4,10 +4,9 @@ from typing import Optional
 from pydantic import BaseModel, validator
 
 
-# Models for the request and response payloads
 class ShipPlacement(BaseModel):
     ship_type: str
-    start: dict  # {"row": int, "column": str}
+    start: dict
     direction: str
 
     @validator("start")
@@ -24,12 +23,12 @@ class ShipPlacement(BaseModel):
 
 
 class Turn(BaseModel):
-    target: dict  # {"row": int, "column": str}
+    target: dict
 
 
 class TurnResponse(BaseModel):
     result: str
-    ship_type: Optional[str]  # This would be None if the result is a miss
+    ship_type: Optional[str]
 
 
 class GameStatus(BaseModel):
@@ -43,9 +42,9 @@ from typing import List
 class Game(BaseModel):
     game_id: str
     players: List[str]
-    board: dict  # This could represent the state of the game board, you might need to flesh this out further
-    ships: List[ShipPlacement]  # List of ship placements for this game
-    turns: List[Turn]  # List of turns that have been taken
+    board: dict
+    ships: List[ShipPlacement]
+    turns: List[Turn]
 
 
 class AbstractBattleship(ABC):
@@ -59,49 +58,35 @@ class AbstractBattleship(ABC):
 
     @abstractmethod
     def create_ship_placement(self, game_id: str, placement: ShipPlacement) -> None:
-        """
-        Place a ship on the grid.
-        """
+
         pass
 
     @abstractmethod
     def create_turn(self, game_id: str, turn: Turn) -> TurnResponse:
-        """
-        Players take turns to target a grid cell.
-        """
+
         pass
 
     @abstractmethod
     def get_game_status(self, game_id: str) -> GameStatus:
-        """
-        Check if the game is over and get the winner if there's one.
-        """
+
         pass
 
     @abstractmethod
     def get_winner(self, game_id: str) -> str:
-        """
-        Get the winner of the game.
-        """
+
         pass
 
     @abstractmethod
     def get_game(self) -> Game:
-        """
-        Retrieve the state of the game.
-        """
+
         pass
 
     @abstractmethod
     def delete_game(self, game_id: str) -> None:
-        """
-        Delete a game given its ID.
-        """
+
         pass
 
     @abstractmethod
     def create_game(self) -> None:
-        """
-        Create a new game.
-        """
+
         pass

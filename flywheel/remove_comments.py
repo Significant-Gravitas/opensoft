@@ -1,13 +1,10 @@
-""" Strip comments and docstrings from a file.
-"""
+import io
 import os
-import sys, token, tokenize
+import tokenize
 
-import io  # Replace cStringIO with io
+
 def remove_comments_and_docstrings(source):
-    """
-    Returns 'source' minus comments and docstrings.
-    """
+
     io_obj = io.StringIO(source)
     out = ""
     prev_toktype = tokenize.INDENT
@@ -19,40 +16,24 @@ def remove_comments_and_docstrings(source):
         start_line, start_col = tok[2]
         end_line, end_col = tok[3]
         ltext = tok[4]
-        # The following two conditionals preserve indentation.
-        # This is necessary because we're not using tokenize.untokenize()
-        # (because it spits out code with copious amounts of oddly-placed
-        # whitespace).
+
         if start_line > last_lineno:
             last_col = 0
         if start_col > last_col:
-            out += (" " * (start_col - last_col))
-        # Remove comments:
+            out += " " * (start_col - last_col)
+
         if token_type == tokenize.COMMENT:
             pass
-        # This series of conditionals removes docstrings:
+
         elif token_type == tokenize.STRING:
             if prev_toktype != tokenize.INDENT:
-        # This is likely a docstring; double-check we're not inside an operator:
+
                 if prev_toktype != tokenize.NEWLINE:
-                    # Note regarding NEWLINE vs NL: The tokenize module
-                    # differentiates between newlines that start a new statement
-                    # and newlines inside of operators such as parens, brackes,
-                    # and curly braces.  Newlines inside of operators are
-                    # NEWLINE and newlines that start new code are NL.
-                    # Catch whole-module docstrings:
+
                     if start_col > 0:
-                        # Unlabelled indentation means we're inside an operator
+
                         out += token_string
-                    # Note regarding the INDENT token: The tokenize module does
-                    # not label indentation inside of an operator (parens,
-                    # brackets, and curly braces) as actual indentation.
-                    # For example:
-                    # def foo():
-                    #     "The spaces before this docstring are tokenize.INDENT"
-                    #     test = [
-                    #         "The spaces before this string do not get a token"
-                    #     ]
+
         else:
             out += token_string
         prev_toktype = token_type
@@ -60,17 +41,19 @@ def remove_comments_and_docstrings(source):
         last_lineno = end_line
     return out
 
+
 def process_directory(directory):
     for root, dirs, files in os.walk(directory):
         for fname in files:
-            if fname.endswith('.py'):
+            if fname.endswith(".py"):
                 filepath = os.path.join(root, fname)
-                with open(filepath, 'r') as f:
+                with open(filepath, "r") as f:
                     content = f.read()
                 stripped_content = remove_comments_and_docstrings(content)
-                with open(filepath, 'w') as f:
+                with open(filepath, "w") as f:
                     f.write(stripped_content)
 
-if __name__ == '__main__':
-    directory = 'flywheel'
+
+if __name__ == "__main__":
+    directory = "flywheel"
     process_directory(directory)

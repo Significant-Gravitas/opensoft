@@ -1,4 +1,4 @@
-import pyperclip  # Ensure you've installed this library
+import pyperclip
 from util.common import print_file_content
 
 if __name__ == "__main__":
@@ -11,5 +11,5 @@ INSTRUCTIONS:What are some tests you could write ? Please write them.
 ASSISTANT:
 Here is a few tests that are missing:
 """
-    # Copy the content to the clipboard
+
     pyperclip.copy(result_str)

@@ -126,6 +126,7 @@ def function_three():
     output = injector.inject_functions(initial_content, suggestion_content)
     assert output.strip() == expected_output.strip()
 
+
 def test_import_injection():
     initial_content = """
 def simple_function():

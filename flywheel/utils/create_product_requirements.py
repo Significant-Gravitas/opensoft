@@ -1,6 +1,5 @@
-import pyperclip  # Ensure you've installed this library
+import pyperclip
 from pass_test import print_file_content
-
 from utils.create_more_tests_2 import MODULE
 
 if __name__ == "__main__":

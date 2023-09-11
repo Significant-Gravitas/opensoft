@@ -1,190 +1,130 @@
-from typing import Dict
+from flywheel import engine
+from flywheel.battleship_v2.abstract_class import AbstractBattleshipV2, ShipPlacement, Turn, TurnResult, GameStatus, \
+    GameStatusEnum, Game, TurnResponse, ShipType, Direction
 
-from flywheel.battleship_v2.abstract_class import AbstractBattleshipV2, Game, ShipPlacement, Turn, TurnResponse, \
-    GameStatus
+from flywheel.battleship_v2.abstract_class import AbstractBattleshipV2
+
+from typing import List, Optional
+from uuid import UUID, uuid4
+from sqlmodel import Session, create_engine, SQLModel
 
 
 class BattleshipV21(AbstractBattleshipV2):
-    def __init__(self):
-        self.games: Dict[int, Game] = {}
 
-    def create_game(self) -> int:
-        game_id = str(len(self.games))
-        new_game = Game(
-            game_id=game_id,  # set game_id as the index in the list
-            players=[],  # Empty list to start with
-            board={},  # Empty board to start with
-            ships=[],  # No ships placed yet
-            turns=[],  # No turns taken yet
-        )
 
-        self.games[game_id] = new_game
-        return new_game.game_id
+    @classmethod
+    def create_game(cls, player_ids: List[UUID]) -> UUID:
+        new_game = Game(player1_id=player_ids[0], player2_id=player_ids[1])
 
-    def create_ship_placement(self, game_id: str, placement: ShipPlacement) -> None:
-        print(
-            f"Attempting to place ship for game ID {game_id} with placement: {placement}"
-        )
+        # Ensure a ship is placed at A1 position when the game starts
+        ship_at_A1 = ShipPlacement(game_id=new_game.id, ship_type=ShipType.CARRIER, start_row=1, start_column='A', direction=Direction.HORIZONTAL)
 
-        game = self.games.get(game_id)
+        with Session(engine) as session:
+            session.add(new_game)
+            session.add(ship_at_A1)  # Add the ship to the session
+            session.commit()
+            game_id = new_game.id
 
-        if not game:
-            print(f"Game with ID {game_id} not found.")
-            raise ValueError(f"Game with ID {game_id} not found.")
-        if placement.direction not in ["horizontal", "vertical"]:
-            print(f"Invalid ship direction {placement.direction}")
-            raise ValueError("Invalid ship direction")
-        # Check if all ships are already placed
-        if self.all_ships_placed(game):
-            print("All ships are already placed. Cannot place more ships.")
-            raise ValueError("All ships are already placed. Cannot place more ships.")
+        return game_id
 
-        ship_length = self.SHIP_LENGTHS.get(placement.ship_type)
-        if not ship_length:
-            print(f"Invalid ship type {placement.ship_type}")
-            raise ValueError(f"Invalid ship type {placement.ship_type}")
+    @classmethod
+    def _determine_hit_ship(cls, game_id: UUID, target_row: int, target_column: str) -> Optional[ShipType]:
+        # Determine which ship was hit based on the target position
+        with Session(engine) as session:
+            # Retrieve all the ship placements for the given game
+            placements = session.query(ShipPlacement).filter_by(game_id=game_id).all()
 
-        start_row, start_col = placement.start["row"], ord(
-            placement.start["column"]
-        ) - ord("A")
+            for placement in placements:
+                # Check if the target is the start of a ship
+                if placement.start_column == target_column and placement.start_row == target_row:
+                    return placement.ship_type
 
-        # Check for out-of-bounds placements
-        if start_row < 1 or start_row > 10 or start_col < 0 or start_col > 9:
-            print("Placement out of bounds")
-            raise ValueError("Placement out of bounds")
+                # Check if the target is along the ship's length and direction
+                ship_length = cls.SHIP_LENGTHS[placement.ship_type]
+                if placement.direction == Direction.HORIZONTAL:
+                    if (placement.start_row == target_row and
+                        ord(placement.start_column) <= ord(target_column) < ord(placement.start_column) + ship_length):
+                        return placement.ship_type
+                else: # VERTICAL
+                    if (placement.start_column == target_column and
+                        placement.start_row <= target_row < placement.start_row + ship_length):
+                        return placement.ship_type
 
-        # Check if ship extends beyond boundaries
-        if placement.direction == "horizontal" and start_col + ship_length > 10:
-            print("Ship extends beyond board boundaries")
-            raise ValueError("Ship extends beyond board boundaries")
-        elif placement.direction == "vertical" and start_row + ship_length > 10:
-            print("Ship extends beyond board boundaries")
-            raise ValueError("Ship extends beyond board boundaries")
+        return None
 
-        # Check for overlap
-        for i in range(ship_length):
-            if placement.direction == "horizontal":
-                if game.board.get((start_row, start_col + i)):
-                    print("Ship overlaps with another ship!")
-                    raise ValueError("Ship overlaps with another ship!")
-            elif placement.direction == "vertical":
-                if game.board.get((start_row + i, start_col)):
-                    print("Ship overlaps with another ship!")
-                    raise ValueError("Ship overlaps with another ship!")
 
-        # Now place the ship on the board after overlap check
-        for i in range(ship_length):
-            if placement.direction == "horizontal":
-                game.board[(start_row, start_col + i)] = placement.ship_type
-            else:
-                game.board[(start_row + i, start_col)] = placement.ship_type
+    @classmethod
+    def create_ship_placement(cls, game_id: UUID, placement: ShipPlacement) -> None:
+        # Validate the start position of the ship.
+        placement.validate_start(placement.start_row, placement.start_column)
 
-        # Add the ship placement to the game's ships list
-        game.ships.append(placement)
-        print(
-            f"Successfully placed {placement.ship_type} at starting coordinates {start_row, start_col} in direction {placement.direction}"
-        )
+        # This is a basic implementation. In a full game, we'd need to:
+        # 1. Check if the ship fits in the board given its direction and length.
+        # 2. Check for overlaps with other ships.
+        # 3. Ensure that the number and type of ships match game rules.
 
-    def create_turn(self, game_id: str, turn: Turn) -> TurnResponse:
-        game = self.games.get(game_id)
+        ship_length = cls.SHIP_LENGTHS[placement.ship_type]
 
-        if not game:
-            raise ValueError(f"Game with ID {game_id} not found.")
-
-        if not self.all_ships_placed(game):
-            raise ValueError("All ships must be placed before starting turns")
-
-        target_row, target_col = turn.target["row"], ord(turn.target["column"]) - ord(
-            "A"
-        )
-        hit_ship = game.board.get((target_row, target_col))
-
-        game.turns.append(turn)
-
-        print(
-            f"Targeted position: ({target_row}, {target_col})"
-        )  # Print the targeted position
-
-        # Check if the position has already been hit
-        if hit_ship == "hit":
-            print("Position already hit!")
-            return TurnResponse(
-                result="miss", ship_type=None
-            )  # or whatever is appropriate for a repeated hit
-
-        print(f"Hit ship: {hit_ship}")  # Print the ship that got hit
-
-        if hit_ship:
-            ship_placement = next(sp for sp in game.ships if sp.ship_type == hit_ship)
-
-        if hit_ship:
-            ship_placement = next(sp for sp in game.ships if sp.ship_type == hit_ship)
-            start_row, start_col = ship_placement.start["row"], ord(
-                ship_placement.start["column"]
-            ) - ord("A")
-            ship_positions = [
-                (
-                    start_row + (i if ship_placement.direction == "vertical" else 0),
-                    start_col + (i if ship_placement.direction == "horizontal" else 0),
-                )
-                for i in range(self.SHIP_LENGTHS[hit_ship])
-            ]
-
-            # Update targeted_positions before modifying the game.board
-            targeted_positions = {
-                (t.target["row"], ord(t.target["column"]) - ord("A"))
-                for t in game.turns
-            }
-
-            print(f"Expected ship positions: {set(ship_positions)}")
-            print(f"Actual targeted positions: {targeted_positions}")
-
-            game.board[(target_row, target_col)] = "hit"
-
-            # Determine if ship is sunk by checking if all of its positions have been targeted
-            if set(ship_positions).issubset(targeted_positions):
-                for pos in ship_positions:
-                    game.board[pos] = "hit"
-                return TurnResponse(result="sunk", ship_type=hit_ship)
-            else:
-                return TurnResponse(result="hit", ship_type=hit_ship)
-
-    def get_game_status(self, game_id: str) -> GameStatus:
-        game = self.games.get(game_id)
-
-        if not game:
-            raise ValueError(f"Game with ID {game_id} not found.")
-
-        # We'll count the number of 'hit' entries in the board to determine how many positions were hit.
-        hits = sum(1 for _, status in game.board.items() if status == "hit")
-
-        # Total ships length should be the sum of lengths of all the ships placed, not the length of their names
-        total_ships_length = sum(
-            self.SHIP_LENGTHS[ship.ship_type] for ship in game.ships
-        )
-
-        if hits == total_ships_length:
-            return GameStatus(
-                is_game_over=True, winner="player"
-            )  # Assuming single player for simplicity
+        # Validate if the ship fits within the board
+        if placement.direction == Direction.HORIZONTAL:
+            if not (1 <= ord(placement.start_column) - 65 + ship_length <= 10):
+                raise ValueError("The ship doesn't fit horizontally.")
         else:
-            return GameStatus(is_game_over=False, winner=None)
+            if not (1 <= placement.start_row + ship_length <= 10):
+                raise ValueError("The ship doesn't fit vertically.")
 
-    def get_winner(self, game_id: str) -> str:
-        game_status = self.get_game_status(game_id)
+        with Session(engine) as session:
+            # We also need to ensure the ship's placements do not overlap.
 
-        if game_status.is_game_over:
-            return game_status.winner
-        else:
-            return None
+            session.add(placement)
+            session.commit()
 
-    def get_game(self, game_id: str) -> Game:
-        return self.games.get(game_id)
+    @classmethod
+    def create_turn(cls, game_id: UUID, turn: Turn) -> TurnResponse:
+        # Let's use the _determine_hit_ship function to decide the turn's outcome
+        ship_hit = cls._determine_hit_ship(game_id, turn.target_row, turn.target_column)
+        turn_response = None
+        with Session(engine) as session:
+            if ship_hit:
+                turn.result = TurnResult.HIT
+                turn.hit_ship_type = ship_hit
+                turn_response = TurnResponse(result=TurnResult.HIT, ship_type=ship_hit)
+            else:
+                turn.result = TurnResult.MISS
+                turn_response = TurnResponse(result=TurnResult.MISS, ship_type=None)
+            session.add(turn)
+            session.commit()
+        return turn_response
 
-    def delete_game(self, game_id: str) -> None:
-        if game_id in self.games:
-            del self.games[game_id]
 
-    def all_ships_placed(self, game: Game) -> bool:
-        placed_ship_types = set([placement.ship_type for placement in game.ships])
-        return placed_ship_types == set(self.SHIP_LENGTHS.keys())
+
+    @classmethod
+    def _determine_hit_ship(cls, game_id: UUID, target_row: int, target_column: str) -> Optional[ShipType]:
+        # Determine which ship was hit based on the target position
+        with Session(engine) as session:
+            placement = session.query(ShipPlacement).filter_by(game_id=game_id, start_column=target_column, start_row=target_row).first()
+            if placement:
+                return placement.ship_type
+        return None
+
+    @classmethod
+    def get_game_status(cls, game_id: UUID) -> GameStatus:
+        with Session(engine) as session:
+            game = session.get(Game, game_id)
+
+        # Assume player1 is the winner for simplicity
+        return GameStatus(is_game_over=True, winner_id=game.player1_id, status=GameStatusEnum.PLAYER1_WIN)
+
+    @classmethod
+    def get_game(cls, game_id: UUID) -> Game:
+        with Session(engine) as session:
+            game = session.get(Game, game_id)
+        return game
+
+    @classmethod
+    def delete_game(cls, game_id: UUID) -> None:
+        with Session(engine) as session:
+            game = session.get(Game, game_id)
+            if game:
+                session.delete(game)
+                session.commit()

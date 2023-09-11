@@ -1,28 +1,76 @@
+""" Strip comments and docstrings from a file.
+"""
 import os
-import ast
+import sys, token, tokenize
 
-def remove_comments_from_code(code):
-    lines = code.splitlines()
-    tree = ast.parse(code)
+import io  # Replace cStringIO with io
+def remove_comments_and_docstrings(source):
+    """
+    Returns 'source' minus comments and docstrings.
+    """
+    io_obj = io.StringIO(source)
+    out = ""
+    prev_toktype = tokenize.INDENT
+    last_lineno = -1
+    last_col = 0
+    for tok in tokenize.generate_tokens(io_obj.readline):
+        token_type = tok[0]
+        token_string = tok[1]
+        start_line, start_col = tok[2]
+        end_line, end_col = tok[3]
+        ltext = tok[4]
+        # The following two conditionals preserve indentation.
+        # This is necessary because we're not using tokenize.untokenize()
+        # (because it spits out code with copious amounts of oddly-placed
+        # whitespace).
+        if start_line > last_lineno:
+            last_col = 0
+        if start_col > last_col:
+            out += (" " * (start_col - last_col))
+        # Remove comments:
+        if token_type == tokenize.COMMENT:
+            pass
+        # This series of conditionals removes docstrings:
+        elif token_type == tokenize.STRING:
+            if prev_toktype != tokenize.INDENT:
+        # This is likely a docstring; double-check we're not inside an operator:
+                if prev_toktype != tokenize.NEWLINE:
+                    # Note regarding NEWLINE vs NL: The tokenize module
+                    # differentiates between newlines that start a new statement
+                    # and newlines inside of operators such as parens, brackes,
+                    # and curly braces.  Newlines inside of operators are
+                    # NEWLINE and newlines that start new code are NL.
+                    # Catch whole-module docstrings:
+                    if start_col > 0:
+                        # Unlabelled indentation means we're inside an operator
+                        out += token_string
+                    # Note regarding the INDENT token: The tokenize module does
+                    # not label indentation inside of an operator (parens,
+                    # brackets, and curly braces) as actual indentation.
+                    # For example:
+                    # def foo():
+                    #     "The spaces before this docstring are tokenize.INDENT"
+                    #     test = [
+                    #         "The spaces before this string do not get a token"
+                    #     ]
+        else:
+            out += token_string
+        prev_toktype = token_type
+        last_col = end_col
+        last_lineno = end_line
+    return out
 
-    line_nos = {node.lineno for node in ast.walk(tree) if hasattr(node, 'lineno')}
-    new_code = '\n'.join(line for idx, line in enumerate(lines, start=1) if idx in line_nos)
-
-    return new_code
-
-def process_directory(path):
-    for root, dirs, files in os.walk(path):
-        # Only process if 'flywheel' is part of the directory path
-        if 'flywheel' in root:
-            for file in files:
-                if file.endswith('.py'):
-                    with open(os.path.join(root, file), 'r', encoding='utf-8') as f:
-                        content = f.read()
-                    content_no_comments = remove_comments_from_code(content)
-                    with open(os.path.join(root, file), 'w', encoding='utf-8') as f:
-                        f.write(content_no_comments)
-
-# Start the script from the root of your codebase
+def process_directory(directory):
+    for root, dirs, files in os.walk(directory):
+        for fname in files:
+            if fname.endswith('.py'):
+                filepath = os.path.join(root, fname)
+                with open(filepath, 'r') as f:
+                    content = f.read()
+                stripped_content = remove_comments_and_docstrings(content)
+                with open(filepath, 'w') as f:
+                    f.write(stripped_content)
 
 if __name__ == '__main__':
-    process_directory('/path/to/your/codebase')
+    directory = 'flywheel'
+    process_directory(directory)

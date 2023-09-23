@@ -16,3 +16,8 @@ def player1():
 def player2():
     # Similarly, a basic fixture for the 'player2' object.
     return Player(id=2, name="Player 2")
+
+@pytest.fixture
+def game(player1, player2, battleship_v3):
+    game_id = battleship_v3.create_game([player1.id, player2.id])
+    return battleship_v3.get_game(game_id)

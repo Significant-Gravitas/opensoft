@@ -167,3 +167,4 @@ secrets.json
 challenges_already_beaten.json
 agbenchmark/challenges/pri_*
 node_modules
+test.db

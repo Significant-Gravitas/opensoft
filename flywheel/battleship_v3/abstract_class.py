@@ -96,6 +96,11 @@ class AbstractBattleshipV3(ABC, BaseClass):
 
     @classmethod
     @abstractmethod
+    def get_ship_placement(cls, game_id: int, ship_type: ShipType) -> ShipPlacement:
+        pass
+
+    @classmethod
+    @abstractmethod
     def create_ship_placement(cls, game_id: int, placement: ShipPlacement) -> None:
 
         pass

@@ -4,7 +4,7 @@ from sqlmodel import Session
 
 from flywheel import engine
 from flywheel.battleship_v3.abstract_class import AbstractBattleshipV3, ShipPlacement, Turn, TurnResult, GameStatus, \
-    Game, Player
+    Game, Player, ShipType
 
 
 class BattleshipV31(AbstractBattleshipV3):
@@ -54,3 +54,8 @@ class BattleshipV31(AbstractBattleshipV3):
     def get_player(cls, player_id: int) -> Player:
         # TODO: implement this method
         pass
+
+    @classmethod
+    def get_ship_placement(cls, game_id: int, ship_type: ShipType) -> ShipPlacement:
+        with Session(engine) as session:
+            return session.query(ShipPlacement).filter(ShipPlacement.game_id == game_id, ShipPlacement.ship_type == ship_type).first()

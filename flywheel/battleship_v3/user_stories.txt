@@ -10,11 +10,6 @@ Feature: Setup and Start
     When I place a ship on the 10x10 grid
     Then the ship should occupy its specified grid squares
 
-  Scenario: Rotating ships during placement
-    Given I am positioning a ship
-    When I choose to rotate it
-    Then the ship should change its orientation
-
   Scenario: Ensuring ships do not overlap
     Given I already have a ship placed on specific grid squares
     When I try to place another ship on the same squares

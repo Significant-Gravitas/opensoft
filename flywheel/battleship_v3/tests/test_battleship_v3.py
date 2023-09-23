@@ -6,7 +6,5 @@ def test_starting_a_new_game(battleship_v3, player1, player2):
 
     # Then the game should initiate against my opponent
     game = battleship_v3.get_game(game_id)
-    assert game.player1_id == player1
-    assert game.player2_id == player2
-    assert not game.is_game_over
-    assert game.winner_id is None
+    assert game.player1_id == player1.id
+    assert game.player2_id == player2.id

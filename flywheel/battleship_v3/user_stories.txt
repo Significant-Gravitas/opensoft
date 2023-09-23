@@ -1,0 +1,73 @@
+Feature: Setup and Start
+
+  Scenario: Starting a new game
+    Given the game is launched
+    When I choose to start a new game
+    Then the game should initiate against my opponent
+
+  Scenario: Positioning ships on the grid
+    Given it's my turn to position ships
+    When I place a ship on the 10x10 grid
+    Then the ship should occupy its specified grid squares
+
+  Scenario: Rotating ships during placement
+    Given I am positioning a ship
+    When I choose to rotate it
+    Then the ship should change its orientation
+
+  Scenario: Ensuring ships do not overlap
+    Given I already have a ship placed on specific grid squares
+    When I try to place another ship on the same squares
+    Then I should be prevented from doing so
+
+  Scenario: Hiding ship placements from the opponent
+    Given I have positioned my ships
+    When my opponent views their screen
+    Then they should not see my ship placements
+
+
+Feature: Gameplay
+
+  Scenario: Guessing a grid square
+    Given it's my turn to guess
+    When I call out a grid square
+    Then my opponent should validate if it's a "hit" or "miss"
+
+  Scenario: Getting another turn after a successful hit
+    Given I have successfully hit an opponent's ship
+    When I guess again
+    Then it should still be my turn
+
+  Scenario: Informing the opponent of a sunk ship
+    Given one of my ships has all its squares hit
+    When my opponent ends their turn
+    Then I should inform them which ship they have sunk
+
+  Scenario: Tracking hits and misses
+    Given the game is in progress
+    When I view my grid
+    Then I should see markers for my hits and misses
+
+
+Feature: Endgame
+
+  Scenario: Losing the game
+    Given all my ships have been sunk
+    Then I should be notified of my loss
+
+  Scenario: Winning the game
+    Given I have sunk all my opponent's ships
+    Then I should be notified of my victory
+
+  Scenario: Starting a new game post completion
+    Given the game has ended
+    When I choose to start a new game
+    Then a new game should initiate against my opponent
+
+
+Feature: Not Allowed
+
+  Scenario: Prevent hitting ships before placement
+    Given not all ships are placed
+    When I try to hit an opponent's ship
+    Then I should be prevented from doing so

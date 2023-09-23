@@ -12,3 +12,11 @@ Creating implementation:
 put strategic print statements in order to easily debug
 
 Fixture creator
+
+
+
+Write user stories:
+no notifications
+no activity logging
+no payment system
+no authentication system

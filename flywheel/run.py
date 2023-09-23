@@ -82,12 +82,12 @@ def load_content_for_add_tests(module):
     user_stories = print_file_content(f"flywheel/{module}/user_stories.txt")
     abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
     fixtures = print_file_content(f"flywheel/{module}/conftest.py")
+    fixtures = print_file_content(f"flywheel/{module}/tests/test_{module}.py")
     instructions = """
 INSTRUCTIONS:
-What are some tests you could write? Please write them.
-Do not include negative tests, they're already covered in another folder.
+Pick the first Gherkin scenario not implemented and write a test for it. It should be named exactly like the scenario but snake_case. (e.g. "As a user I want to be able to add a product to my cart" -> "test_as_a_user_i_want_to_be_able_to_add_a_product_to_my_cart")
 ASSISTANT:
-Ok I won't include negative tests, here are a few tests that are missing:
+Here is the test you should be writing, using pytest:
 """
     result_str = (
         product_requirements + user_stories + abstract_class + fixtures + instructions

@@ -12,6 +12,7 @@ IMPLEMENTATION_NUMBER = 1
 
 
 def load_content_for_pass_tests_strict(module, pick_item):
+    db_engine = print_file_content(f"flywheel/engine.py")
     abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
     implementation = print_file_content(
         f"flywheel/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
@@ -22,7 +23,8 @@ def load_content_for_pass_tests_strict(module, pick_item):
     )
 
     if pytest_failure[0] is None:
-        raise Exception("No failure found")
+        print("No failure found")
+        pytest_failure = [""]
 
     instructions = """
 User:
@@ -32,7 +34,7 @@ Here is my suggestion to modify the class + the code that comes with it.
 I won't modify the tests or the abstract class or add any attributes to the existing classes
 """
     result_str = (
-        abstract_class + implementation + fixtures + pytest_failure[0] + instructions
+        db_engine + abstract_class + implementation + fixtures + pytest_failure[0] + instructions
     )
 
     if len(result_str) > 12000:
@@ -42,6 +44,7 @@ I won't modify the tests or the abstract class or add any attributes to the exis
 
 
 def load_content_for_pass_tests(module, pick_item):
+    db_engine = print_file_content(f"flywheel/engine.py")
     abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
     implementation = print_file_content(
         f"flywheel/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
@@ -52,7 +55,8 @@ def load_content_for_pass_tests(module, pick_item):
     )
 
     if pytest_failure[0] is None:
-        raise Exception("No failure found")
+        print("No failure found")
+        pytest_failure = [""]
 
     instructions = """
 User:
@@ -60,7 +64,7 @@ Modify the class or the tests in order for the test to pass, depending on whethe
 Assistant:
 """
     result_str = (
-        abstract_class + implementation + fixtures + pytest_failure[0] + instructions
+        db_engine + abstract_class + implementation + fixtures + pytest_failure[0] + instructions
     )
 
     if len(result_str) > 12000:
@@ -78,7 +82,7 @@ def load_content_for_remove_first_test(module, pick_item):
     return test_code
 
 
-def load_content_for_add_tests(module):
+def load_content_for_add_tests(module, only_gherkin=True):
     product_requirements = print_file_content(
         f"flywheel/{module}/product_requirements.txt"
     )
@@ -86,9 +90,13 @@ def load_content_for_add_tests(module):
     abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
     fixtures = print_file_content(f"flywheel/{module}/conftest.py")
     tests = print_file_content(f"flywheel/{module}/tests/test_{module}.py")
-    instructions = """
-INSTRUCTIONS:
-Pick the first Gherkin scenario not implemented and write a test for it. It should be named exactly like the scenario but snake_case. (e.g. "As a user I want to be able to add a product to my cart" -> "test_as_a_user_i_want_to_be_able_to_add_a_product_to_my_cart")
+    if only_gherkin:
+        prefix = """Pick the first Gherkin scenario not implemented and write a test for it. It should be named exactly like the scenario but snake_case. (e.g. "As a user I want to be able to add a product to my cart" -> "test_as_a_user_i_want_to_be_able_to_add_a_product_to_my_cart")"""
+    else:
+        prefix = """Write more tests"""
+
+    instructions= f"""
+INSTRUCTIONS: {prefix}
 ASSISTANT:
 Here is the test you should be writing, using pytest:
 """
@@ -132,6 +140,8 @@ Here is the test you should be writing, using pytest:
             if len(result_str) > 12000:
                 raise Exception("Prompt too long")
     return result_str
+
+
 
 
 def load_content_for_remove_tests(module):
@@ -199,6 +209,8 @@ def run(module, command, pick_item, result_only):
         result_str = load_content_for_pass_tests(module, 0)
     elif command == "add_tests":
         result_str = load_content_for_add_tests(module)
+    elif command == "add_more_tests":
+        result_str = load_content_for_add_tests(module, only_gherkin=False)
     elif command == "remove_tests":
         result_str = load_content_for_remove_tests(module)
     elif command == "remove_first_test":

@@ -25,8 +25,6 @@ networkx = "^3.1"
 colorama = "^0.4.6"
 pyvis = "^0.3.2"
 selenium = "^4.11.2"
-agent-protocol = "^0.2.3"
-agent-protocol-client = "^0.2.2"
 pytest-asyncio = "^0.21.1"
 uvicorn = "^0.23.2"
 pyperclip = "^1.8.2"
@@ -34,6 +32,7 @@ astor = "^0.8.1"
 pydevd-pycharm = "^232.9559.58"
 pylint = "^2.17.5"
 sqlmodel = "^0.0.8"
+fastapi = "^0.103.1"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -1,16 +1,14 @@
-from sqlmodel import SQLModel
+
 
 from flywheel.engine import engine
 
-SQLModel.metadata.drop_all(engine)
-SQLModel.metadata.create_all(engine)
 
-# import pydevd_pycharm
-#
-#
-# pydevd_pycharm.settrace(
-#     "localhost", port=9739, stdoutToServer=True, stderrToServer=True
-# )
+import pydevd_pycharm
+
+
+pydevd_pycharm.settrace(
+    "localhost", port=9739, stdoutToServer=True, stderrToServer=True
+)
 # from abc import ABC, abstractmethod
 # from typing import Any
 #

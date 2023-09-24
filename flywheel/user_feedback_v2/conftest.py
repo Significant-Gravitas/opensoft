@@ -1,21 +1,23 @@
+import asyncio
 import pytest
 from httpx import AsyncClient
-
 from flywheel.app import app
 
-
 @pytest.fixture
-async def client(
-    anyio_backend,
-):
+def client(request):
     """
     Fixture that creates client for requesting server.
 
-    :param fastapi_app: the application.
-    :yield: client for the app.
+    :return: client for the app.
     """
-    async with AsyncClient(
-            app=app,
-            base_url="http://127.0.0.1:8000"
-    ) as ac:
-        yield ac
+    # Create an instance of AsyncClient
+    ac = AsyncClient(app=app, base_url="http://127.0.0.1:8000")
+
+    def fin():
+        # Close the client when done
+        asyncio.get_event_loop().run_until_complete(ac.aclose())
+
+    # Use the finalizer to ensure the client is closed after usage
+    request.addfinalizer(fin)
+
+    return ac

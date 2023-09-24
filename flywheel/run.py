@@ -1,3 +1,6 @@
+import random
+import re
+
 import click
 import pyperclip
 
@@ -82,7 +85,7 @@ def load_content_for_add_tests(module):
     user_stories = print_file_content(f"flywheel/{module}/user_stories.txt")
     abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
     fixtures = print_file_content(f"flywheel/{module}/conftest.py")
-    fixtures = print_file_content(f"flywheel/{module}/tests/test_{module}.py")
+    tests = print_file_content(f"flywheel/{module}/tests/test_{module}.py")
     instructions = """
 INSTRUCTIONS:
 Pick the first Gherkin scenario not implemented and write a test for it. It should be named exactly like the scenario but snake_case. (e.g. "As a user I want to be able to add a product to my cart" -> "test_as_a_user_i_want_to_be_able_to_add_a_product_to_my_cart")
@@ -90,9 +93,44 @@ ASSISTANT:
 Here is the test you should be writing, using pytest:
 """
     result_str = (
-        product_requirements + user_stories + abstract_class + fixtures + instructions
+        product_requirements
+        + user_stories
+        + abstract_class
+        + fixtures
+        + tests
+        + instructions
     )
 
+    if len(result_str) > 12000:
+        tests_implemented = (
+            "these tests are already implemented, do not implement them again: \n"
+            + extract_function_names(tests)
+        )
+        result_str = (
+            product_requirements
+            + user_stories
+            + abstract_class
+            + fixtures
+            + take_percentage_of_string(tests, 0.5)
+            + tests_implemented
+            + instructions
+        )
+        if len(result_str) > 12000:
+            tests_implemented = (
+                "these tests are already implemented, do not implement them again: \n"
+                + extract_function_names(tests)
+            )
+            result_str = (
+                product_requirements
+                + user_stories
+                + abstract_class
+                + fixtures
+                + take_percentage_of_string(tests, 0.2)
+                + tests_implemented
+                + instructions
+            )
+            if len(result_str) > 12000:
+                raise Exception("Prompt too long")
     return result_str
 
 
@@ -172,6 +210,25 @@ def run(module, command, pick_item, result_only):
 
     print("Prompt Length:", len(result_str))
     pyperclip.copy(result_str)
+
+
+def take_percentage_of_string(s: str, percentage: float) -> str:
+
+    if not (0 <= percentage <= 1):
+        raise ValueError("Percentage must be between 0 and 1")
+
+    length = len(s)
+    part_length = int(length * percentage)
+
+    start_index = random.randint(0, length - part_length)
+
+    return s[start_index : start_index + part_length]
+
+
+def extract_function_names(text):
+    pattern = re.compile(r"def test_(.*?)\(", re.DOTALL)
+    matches = pattern.findall(text)
+    return ", ".join(matches)
 
 
 if __name__ == "__main__":

@@ -49,6 +49,7 @@ class Game(SQLModel, table=True):
 
 class ShipPlacement(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
+    player_id: int = Field(foreign_key="player.id")
     game_id: int = Field(foreign_key="game.id")
     ship_type: ShipType
     start_row: int
@@ -101,8 +102,9 @@ class AbstractBattleshipV3(ABC, BaseClass):
 
     @classmethod
     @abstractmethod
-    def create_ship_placement(cls, game_id: int, placement: ShipPlacement) -> None:
-
+    def create_ship_placement(
+        cls, game_id: int, player_id: int, placement: ShipPlacement
+    ) -> None:
         pass
 
     @classmethod
@@ -128,7 +130,6 @@ class AbstractBattleshipV3(ABC, BaseClass):
     def delete_game(cls, game_id: int) -> None:
 
         pass
-
 
     @classmethod
     @abstractmethod

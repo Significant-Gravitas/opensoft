@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "flywheel"
+name = "src"
 version = "0.0.9"
 description = "Benchmarking the performance of agents far and wide, regardless of how they are set up and how they work"
 authors = ["Silen Naihin <silen.naihin@gmail.com>"]
@@ -73,7 +73,7 @@ filterwarnings = [
 ]
 
 [tool.poetry.scripts]
-run = "flywheel.run:run"
+run = "src.run:run"
 
 [tool.black]
 line-length = 88

@@ -2,7 +2,7 @@ import ast
 
 import astor
 
-from flywheel.python_injector.abstract_class import (  # Assuming this import is correct
+from src.python_injector.abstract_class import (  # Assuming this import is correct
     AbstractPythoninjector,
 )
 

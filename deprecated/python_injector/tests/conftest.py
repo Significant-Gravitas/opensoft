@@ -1,6 +1,6 @@
 import pytest
 
-from flywheel.python_injector.implementations.python_injector_1 import Pythoninjector1
+from src.python_injector.implementations.python_injector_1 import Pythoninjector1
 
 
 @pytest.fixture

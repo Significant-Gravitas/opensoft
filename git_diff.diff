@@ -1,7 +1,7 @@
-diff --git a/flywheel/battleship/implementations/battleship_4.py b/flywheel/battleship/implementations/battleship_4.py
+diff --git a/src/battleship/implementations/battleship_4.py b/src/battleship/implementations/battleship_4.py
 index abcdef1..1234567
---- a/flywheel/battleship/implementations/battleship_4.py
-+++ b/flywheel/battleship/implementations/battleship_4.py
+--- a/src/battleship/implementations/battleship_4.py
++++ b/src/battleship/implementations/battleship_4.py
 @@ -60,6 +60,10 @@ class Battleship4(AbstractBattleship):
 
      def create_turn(self, game_id: str, turn: Turn) -> TurnResponse:

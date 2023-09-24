@@ -33,6 +33,7 @@ pydevd-pycharm = "^232.9559.58"
 pylint = "^2.17.5"
 sqlmodel = "^0.0.8"
 fastapi = "^0.103.1"
+httpx = "^0.25.0"
 
 
 [tool.poetry.group.dev.dependencies]

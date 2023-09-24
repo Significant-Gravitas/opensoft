@@ -20,9 +20,10 @@ def pytest_addoption(parser):
 
 
 def pytest_generate_tests(metafunc):
-    configurator = ConfiguratorPytest1()
-    module, to_parameterize = configurator.setup_parameterization(metafunc)
-    metafunc.parametrize(module, to_parameterize, indirect=True)
+    if "user_feedback_v2" not in str(metafunc.module):
+        configurator = ConfiguratorPytest1()
+        module, to_parameterize = configurator.setup_parameterization(metafunc)
+        metafunc.parametrize(module, to_parameterize, indirect=True)
 
 
 def pytest_runtest_setup(item):

@@ -12,7 +12,6 @@ from flywheel.user_feedback_v1.abstract_class import AbstractUserFeedbackV1, Fee
 class UserFeedbackV11(AbstractUserFeedbackV1):
 
     @classmethod
-    @app.post("/feedback", response_model=FeedbackRead)
     def create_feedback(cls, feedback: FeedbackCreate) -> FeedbackRead:
         if not feedback.content.strip():  # Check if content is empty or just whitespace
             raise ValueError("Invalid content")

@@ -13,6 +13,7 @@ IMPLEMENTATION_NUMBER = 1
 
 def load_content_for_pass_tests_strict(module, pick_item):
     db_engine = print_file_content(f"flywheel/engine.py")
+    db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
     abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
     implementation = print_file_content(
         f"flywheel/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
@@ -34,17 +35,18 @@ Here is my suggestion to modify the class + the code that comes with it.
 I won't modify the tests or the abstract class or add any attributes to the existing classes
 """
     result_str = (
-        db_engine + abstract_class + implementation + fixtures + pytest_failure[0] + instructions
+        db_engine + db_hint + abstract_class + implementation + fixtures + pytest_failure[0] + instructions
     )
 
     if len(result_str) > 12000:
-        result_str = implementation + fixtures + pytest_failure[0] + instructions
+        result_str = db_engine + db_hint + implementation + fixtures + pytest_failure[0] + instructions
 
     return result_str
 
 
 def load_content_for_pass_tests(module, pick_item):
     db_engine = print_file_content(f"flywheel/engine.py")
+    db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
     abstract_class = print_file_content(f"flywheel/{module}/abstract_class.py")
     implementation = print_file_content(
         f"flywheel/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
@@ -64,11 +66,11 @@ Modify the class or the tests in order for the test to pass, depending on whethe
 Assistant:
 """
     result_str = (
-        db_engine + abstract_class + implementation + fixtures + pytest_failure[0] + instructions
+        db_engine + db_hint + db_engine + abstract_class + implementation + fixtures + pytest_failure[0] + instructions
     )
 
     if len(result_str) > 12000:
-        result_str = implementation + fixtures + pytest_failure[0] + instructions
+        result_str = db_engine + db_hint + implementation + fixtures + pytest_failure[0] + instructions
 
     return result_str
 

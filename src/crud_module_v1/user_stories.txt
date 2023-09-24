@@ -1,0 +1,12 @@
+Feature: Module API
+
+  Scenario: Listing Modules
+    Given some modules are present
+    When the user asks the list of modules
+    Then the system should return the list of modules
+
+  Scenario: Creating a Module
+    Given the system allows module creation
+    When the user submits a request to create a module with valid details
+    Then the system should create a new module
+    And the user should receive a confirmation of the module creation.

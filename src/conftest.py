@@ -20,7 +20,7 @@ def pytest_addoption(parser):
 
 
 def pytest_generate_tests(metafunc):
-    if "user_feedback_v2" not in str(metafunc.module):
+    if "user_feedback_v2" not in str(metafunc.module) and "crud_module_v1" not in str(metafunc.module):
         configurator = ConfiguratorPytest1()
         module, to_parameterize = configurator.setup_parameterization(metafunc)
         metafunc.parametrize(module, to_parameterize, indirect=True)

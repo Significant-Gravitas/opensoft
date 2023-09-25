@@ -6,12 +6,12 @@ import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
-function CrudModuleV2() {
+function FileRenamerV3() {
     const [modules, setModules] = useState([]);
 
     useEffect(() => {
         // Fetch all the modules from the backend when component mounts
-        fetch('http://127.0.0.1:8000/v2/modules/')
+        fetch('http://127.0.0.1:8000/v1/modules/')
         .then(response => response.json())
         .then(data => {
             setModules(data);
@@ -36,4 +36,4 @@ function CrudModuleV2() {
 }
 
 
-export default CrudModuleV2;
+export default FileRenamerV3;

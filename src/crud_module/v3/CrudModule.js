@@ -6,7 +6,7 @@ import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
-function CrudModuleV3() {
+function CrudModule() {
     const [modules, setModules] = useState([]);
 
     useEffect(() => {
@@ -36,4 +36,4 @@ function CrudModuleV3() {
 }
 
 
-export default CrudModuleV3;
+export default CrudModule;

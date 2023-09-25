@@ -11,7 +11,7 @@ async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient
 
     # Send a request to the API with the improved payload
     response = await client.post(
-        "/filename_replace",
+        "/v1/filename_replacement",
         json={
             "module_names": module_targets,
             "filename_contains": filename_search,
@@ -29,7 +29,7 @@ async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient
     assert response_data["data"]["replace_with"] == filename_replacement
     # reverse the operation
     response = await client.post(
-        "/filename_replace",
+        "/v1/filename_replacement",
         json={
             "module_names": module_targets,
             "filename_contains": filename_replacement,

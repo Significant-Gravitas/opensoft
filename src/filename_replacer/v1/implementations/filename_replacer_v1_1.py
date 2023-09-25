@@ -24,7 +24,7 @@ def rename_files_in_modules(module_names: List[str], filename_contains: str, rep
                     shutil.move(item.path, module_path / new_name)
 
 
-@filename_replacer_v1_router.post("/filename_replace", response_model=Union[FilenameReplacementRead, dict])
+@filename_replacer_v1_router.post("/filename_replacement", response_model=Union[FilenameReplacementRead, dict])
 async def create_filename_replacements(replacement: FilenameReplacementCreate):
     # Execute filename replacements
     rename_files_in_modules(replacement.module_names, replacement.filename_contains, replacement.replace_with)

@@ -3,18 +3,10 @@ from sqlmodel import SQLModel, Field
 
 
 # Define a class for creating feedback
-class ModuleBase(SQLModel):
+class FilenameReplacementBase(SQLModel):
     name: constr(min_length=1)
 
-class ModuleRead(ModuleBase):
+class FilenameReplacementRead(FilenameReplacementBase):
     pass
-class ModuleCreate(ModuleBase):
+class FilenameReplacementCreate(FilenameReplacementBase):
     pass
-
-
-
-# the following acts as an contract for the routes
-
-# @app.post("/modules/", response_model=ModuleRead)
-# def get_modules(feedback: ModuleCreate):
-#     pass

@@ -9,7 +9,7 @@ async def test_submitting_feedback(client):
     }
 
     # Using the request method to send the POST request.
-    response = await client.post("/v1/feedback/", json=data) # Add the trailing slash
+    response = await client.post("/user_feedback/", json=data) # Add the trailing slash
 
     # Assertions
     assert response.status_code == 200
@@ -24,7 +24,7 @@ async def test_submitting_feedback_with_invalid_content(client):
     }
 
     # Using the request method to send the POST request.
-    response = await client.post("/v1/feedback/", json=data)  # Ensure the trailing slash
+    response = await client.post("/user_feedback/", json=data)  # Ensure the trailing slash
 
     # Assertions
     assert response.status_code != 200  # The status code should not be 200, as it's an error

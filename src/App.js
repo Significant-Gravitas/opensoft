@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import CrudModuleV1 from "./crud_module/v2/CrudModuleV2";
+import CrudModule from "./crud_module/v2/CrudModule";
 import { useParams } from "react-router-dom";
 
 function toCamelCase(str) {
@@ -17,7 +17,7 @@ function ModuleDetail() {
     // Convert moduleName to CamelCase for the component's name
     const componentName = toCamelCase(moduleName);
     // Form the dynamic path
-    const componentPath = `./${moduleName}/${componentName}`;
+    const componentPath = `./${moduleName}/v1/${componentName}`;
 
     const DynamicComponent = React.lazy(() => import(`${componentPath}`));
 
@@ -37,7 +37,7 @@ function App() {
                 <h1>Feedback App</h1>
                 <div style={{ display: "flex", flexGrow: 1 }}>
                     <div style={{ flexBasis: "30%", overflowY: "auto" }}>
-                        <CrudModuleV1 />
+                        <CrudModule />
                     </div>
                     <div style={{ flexBasis: "70%", overflowY: "auto", borderLeft: "1px solid #ddd" }}>
                         <Routes>

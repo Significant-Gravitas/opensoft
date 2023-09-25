@@ -14,7 +14,7 @@ from fastapi import Depends, APIRouter, HTTPException
 router = APIRouter()
 
 
-@router.post("/feedback/", response_model=FeedbackRead)
+@router.post("/user_feedback/", response_model=FeedbackRead)
 async def feedback(feedback_data: FeedbackCreate):
     with Session(engine) as session:
         # Create Feedback instance

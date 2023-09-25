@@ -16,7 +16,7 @@ for module_name in modules:
 
     for version in versions:
         # Construct the dynamic import path
-        dynamic_path = f"src.{module_name}.{version}.implementations.endpoint"
+        dynamic_path = f"src.{module_name}.{version}.b1.endpoint"
 
         # Dynamically import the module
         module = import_module(dynamic_path)

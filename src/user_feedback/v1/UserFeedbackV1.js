@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const UserFeedbackV2 = () => {
+const UserFeedbackV1 = () => {
     const [content, setContent] = useState("");
     const [message, setMessage] = useState("");
 
@@ -54,4 +54,4 @@ const UserFeedbackV2 = () => {
     );
 };
 
-export default UserFeedbackV2;
+export default UserFeedbackV1;

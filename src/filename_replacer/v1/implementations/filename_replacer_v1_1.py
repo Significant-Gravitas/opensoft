@@ -9,7 +9,6 @@ from src.filename_replacer.v1.abstract_class import FilenameReplacementCreate, F
 
 filename_replacer_v1_router = APIRouter()
 
-from fastapi import HTTPException
 
 def rename_files_in_modules(module_names: List[str], filename_contains: str, replace_with: str):
     cwd = Path.cwd()

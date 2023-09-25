@@ -16,7 +16,7 @@ def get_all_modules():
     # Exclude certain directories like "__pycache__"
     exclude_dirs = {"__pycache__"}
 
-    modules = [FileReplacementRead(name=item.name) for item in os.scandir(modules_dir) if item.is_dir() and item.name not in exclude_dirs]
+    modules = [FilenameReplacementRead(name=item.name) for item in os.scandir(modules_dir) if item.is_dir() and item.name not in exclude_dirs]
     return sorted(modules, key=lambda x: x.name.lower())  # Ensure sorting is case-insensitive
 
 

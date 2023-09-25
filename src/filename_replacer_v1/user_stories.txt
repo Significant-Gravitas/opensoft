@@ -1,6 +1,0 @@
-Feature: Filename Replacer API
-
-  Scenario: Test Can Replace Filenames given a list of modules
-    # Check for non-existence of module initially
-    When the user asks the module "xyz" to have all the filenames containing "abc" to be replaced with "def"
-    Then the system should implement the changes and return a success message with a list of the files changed

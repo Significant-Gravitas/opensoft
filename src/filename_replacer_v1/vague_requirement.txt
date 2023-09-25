@@ -1,1 +1,3 @@
-Vague requirement
+I have modules in my src files and usually I create a module from a previous one.
+The problem is that I have to replace a lot of filenames to make the module work.
+So I want a filename replacer.

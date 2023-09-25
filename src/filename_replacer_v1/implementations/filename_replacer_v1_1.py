@@ -3,24 +3,31 @@ import shutil
 from pathlib import Path
 
 from fastapi import FastAPI, APIRouter, HTTPException
-from typing import List
+from typing import List, Union
 
-from src.filename_replacer_v1.abstract_class import FilenameReplacementRead
+from src.filename_replacer_v1.abstract_class import FilenameReplacementRead, FilenameReplacementCreate
 
 filename_replacer_v1_router = APIRouter()
 
-def get_all_modules():
+from fastapi import HTTPException
+
+def rename_files_in_modules(module_names: List[str], filename_contains: str, replace_with: str):
     cwd = Path.cwd()
-    modules_dir = f"{cwd}/src"
+    modules_dir = Path(f"{cwd}/src")  # Convert string to a Path object
 
-    # Exclude certain directories like "__pycache__"
-    exclude_dirs = {"__pycache__"}
+    for module in module_names:
+        module_path = modules_dir / module
 
-    modules = [FilenameReplacementRead(name=item.name) for item in os.scandir(modules_dir) if item.is_dir() and item.name not in exclude_dirs]
-    return sorted(modules, key=lambda x: x.name.lower())  # Ensure sorting is case-insensitive
+        if module_path.exists() and module_path.is_dir():
+            for item in os.scandir(module_path):
+                if item.is_file() and filename_contains in item.name:
+                    new_name = item.name.replace(filename_contains, replace_with)
+                    shutil.move(item.path, module_path / new_name)
 
 
+@filename_replacer_v1_router.post("/filename_replace", response_model=Union[FilenameReplacementRead, dict])
+async def create_filename_replacements(replacement: FilenameReplacementCreate):
+    # Execute filename replacements
+    rename_files_in_modules(replacement.module_names, replacement.filename_contains, replacement.replace_with)
 
-@filename_replacer_v1_router.get("/v1/filename_replacements/")
-def get_modules() -> List[FilenameReplacementRead]:
-    pass
+    return {"data": replacement, "message": "Success"}

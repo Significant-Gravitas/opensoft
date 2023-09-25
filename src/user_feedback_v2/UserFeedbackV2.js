@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const FeedbackForm = () => {
+const UserFeedbackV2 = () => {
     const [content, setContent] = useState("");
     const [message, setMessage] = useState("");
 
@@ -31,13 +31,20 @@ const FeedbackForm = () => {
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh' // Ensure this container takes the full viewport height
+        }}>
+            <form onSubmit={handleSubmit} style={{ width: '300px', textAlign: 'center' }}>
                 <label>
                     Feedback:
                     <textarea
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
+                        style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}
                     />
                 </label>
                 <button type="submit">Submit</button>
@@ -47,4 +54,4 @@ const FeedbackForm = () => {
     );
 };
 
-export default FeedbackForm;
+export default UserFeedbackV2;

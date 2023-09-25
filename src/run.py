@@ -100,7 +100,7 @@ def load_content_for_add_tests(module, only_gherkin=True):
     instructions= f"""
 INSTRUCTIONS: {prefix}
 ASSISTANT:
-Here is the test you should be writing, using pytest:
+This gherkin scenario is not implemented yet. I will name it test_{{scenario_name_in_snake_case}} and implement the test:
 """
     result_str = (
         product_requirements
@@ -193,6 +193,16 @@ Can you make these tests shorter by adding fixtures ? Also try to reuse the same
     return result_str
 
 
+def load_content_for_fix_frontend(module):
+    app = print_file_content(f"src/App.js")
+
+    module_frontends = print_file_content(f"src/{module}/UserFeedbackV2.js")
+
+    result_str = app + module_frontends
+
+    return result_str
+
+
 @click.command()
 @click.argument("module")
 @click.argument("command")
@@ -219,6 +229,8 @@ def run(module, command, pick_item, result_only):
         result_str = load_content_for_remove_first_test(module, 0)
     elif command == "compress_tests":
         result_str = load_content_for_compress_tests(module)
+    elif command == "fix_frontend":
+        result_str = load_content_for_fix_frontend(module)
     else:
         raise ValueError("Unknown command")
 

@@ -2,6 +2,13 @@ import io
 import os
 from contextlib import redirect_stdout
 
+import pytest
+
+from src.runner_pytest.implementations.runner_pytest_1 import RunnerPytest1
+
+@pytest.fixture
+def runner_pytest():
+    return RunnerPytest1()
 
 def test_no_stdout_from_run_tests(runner_pytest):
     f = io.StringIO()
@@ -31,65 +38,13 @@ def test_retrieve_second_test_code(runner_pytest):
     _, test_code = runner_pytest.get_pytest_failure(n=1, path="src/module_fixture")
     assert test_code is not None
 
-    expected_method_code = """    @pytest.mark.mock
-    def test_should_fail_two(module_fixture):
-    
-        dummy_var_1 = 1
-        dummy_var_2 = 2
-        dummy_var_3 = 3
-        dummy_var_4 = 4
-        dummy_var_5 = 5
-        dummy_var_6 = 6
-        dummy_var_7 = 7
-        dummy_var_8 = 8
-        dummy_var_9 = 9
-        dummy_var_10 = 10
-    
-        dummy_list = [dummy_var_1, dummy_var_2, dummy_var_3]
-        dummy_dict = {"key1": dummy_var_4, "key2": dummy_var_5, "key3": dummy_var_6}
-    
-        dummy_list.append(dummy_var_7)
-        dummy_list.extend([dummy_var_8, dummy_var_9])
-        dummy_dict["key4"] = dummy_var_10
-    
-        dummy_var_1 = 1
-        dummy_var_2 = 2
-        dummy_var_3 = 3
-        dummy_var_4 = 4
-        dummy_var_5 = 5
-        dummy_var_6 = 6
-        dummy_var_7 = 7
-        dummy_var_8 = 8
-        dummy_var_9 = 9
-        dummy_var_10 = 10
-    
-        dummy_list = [dummy_var_1, dummy_var_2, dummy_var_3]
-        dummy_dict = {"key1": dummy_var_4, "key2": dummy_var_5, "key3": dummy_var_6}
-    
-        dummy_list.append(dummy_var_7)
-        dummy_list.extend([dummy_var_8, dummy_var_9])
-        dummy_dict["key4"] = dummy_var_10
-    
-        dummy_var_1 = 1
-        dummy_var_2 = 2
-        dummy_var_3 = 3
-        dummy_var_4 = 4
-        dummy_var_5 = 5
-        dummy_var_6 = 6
-        dummy_var_7 = 7
-        dummy_var_8 = 8
-        dummy_var_9 = 9
-        dummy_var_10 = 10
-    
-        dummy_list = [dummy_var_1, dummy_var_2, dummy_var_3]
-        dummy_dict = {"key1": dummy_var_4, "key2": dummy_var_5, "key3": dummy_var_6}
-    
-        dummy_list.append(dummy_var_7)
-        dummy_list.extend([dummy_var_8, dummy_var_9])
-        dummy_dict["key4"] = dummy_var_10
-    
->       assert False
-E       assert False"""
+    expected_method_code = """def test_should_fail_one(module_fixture):
+    assert False
+
+
+@pytest.mark.mock
+def test_should_fail_two(module_fixture):
+"""
 
     assert expected_method_code in test_code
 

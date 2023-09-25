@@ -23,9 +23,8 @@ class ConfiguratorPytest1(AbstractConfiguratorPytest):
 
         implementations = self._discover_implementations(folder)
 
-        implementation_option = metafunc.config.option.implementation
         to_parameterize = self._determine_parameterization(
-            implementations, implementation_option
+            implementations
         )
 
         module = folder.split("/")[-1]
@@ -53,9 +52,6 @@ class ConfiguratorPytest1(AbstractConfiguratorPytest):
         return implementations
 
     def _determine_parameterization(
-        self, implementations: Dict[str, type], option: str
+        self, implementations: Dict[str, type]
     ) -> List[type]:
-        if option in implementations:
-            return [implementations[option]]
-        else:
-            return list(implementations.values())
+        return list(implementations.values())

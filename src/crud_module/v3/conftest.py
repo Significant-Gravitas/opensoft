@@ -11,7 +11,7 @@ def client(request):
     :return: client for the app.
     """
     # Create an instance of AsyncClient
-    ac = AsyncClient(app=app, base_url="http://127.0.0.1:8000")
+    ac = AsyncClient(app=app, base_url="http://127.0.0.1:8000/v3")
 
     def fin():
         # Close the client when done

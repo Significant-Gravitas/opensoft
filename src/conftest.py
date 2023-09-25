@@ -3,9 +3,6 @@ from sqlalchemy import MetaData
 from sqlmodel import Session, SQLModel
 
 from src import engine
-from src.configurator_pytest.implementations.configurator_pytest_1 import (
-    ConfiguratorPytest1,
-)
 
 
 def pytest_addoption(parser):
@@ -19,11 +16,11 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_generate_tests(metafunc):
-    if "user_feedback_v2" not in str(metafunc.module) and "crud_module_v1" not in str(metafunc.module)  and "crud_module_v2" not in str(metafunc.module) and "crud_module_v3" not in str(metafunc.module) and "filename_replacer_v1" not in str(metafunc.module):
-        configurator = ConfiguratorPytest1()
-        module, to_parameterize = configurator.setup_parameterization(metafunc)
-        metafunc.parametrize(module, to_parameterize, indirect=True)
+# def pytest_generate_tests(metafunc):
+#     if "user_feedback_v2" not in str(metafunc.module) and "crud_module_v1" not in str(metafunc.module)  and "crud_module_v2" not in str(metafunc.module) and "crud_module_v3" not in str(metafunc.module) and "filename_replacer_v1" not in str(metafunc.module):
+#         configurator = ConfiguratorPytest1()
+#         module, to_parameterize = configurator.setup_parameterization(metafunc)
+#         metafunc.parametrize(module, to_parameterize, indirect=True)
 
 
 def pytest_runtest_setup(item):

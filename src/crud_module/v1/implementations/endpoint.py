@@ -6,18 +6,18 @@ from fastapi import FastAPI, APIRouter, HTTPException
 from typing import List
 from src.crud_module.v1.abstract_class import ModuleCreate, ModuleRead
 
-crud_module_v1_router = APIRouter()
+router = APIRouter()
 
 def get_all_modules():
     cwd = Path.cwd()
     modules_dir = f"{cwd}/src"
     return [ModuleRead(name=item.name) for item in os.scandir(modules_dir) if item.is_dir()]
 
-@crud_module_v1_router.get("/modules/")
+@router.get("/modules/")
 def get_modules() -> List[ModuleRead]:
     return get_all_modules()
 
-@crud_module_v1_router.get("/modules/{module_name}/")
+@router.get("/modules/{module_name}/")
 def get_module_by_name(module_name: str) -> ModuleRead:
     all_modules = get_all_modules()
     if module_name not in [module.name for module in all_modules]:
@@ -26,7 +26,7 @@ def get_module_by_name(module_name: str) -> ModuleRead:
 
 
 
-@crud_module_v1_router.post("/modules/", response_model=ModuleRead)
+@router.post("/modules/", response_model=ModuleRead)
 def create_module(module: ModuleCreate) -> dict:
     cwd = Path.cwd()
     folder = f"{cwd}/src/{module.name}"
@@ -37,7 +37,7 @@ def create_module(module: ModuleCreate) -> dict:
             f.write("")
     return ModuleRead(name=module.name)
 
-@crud_module_v1_router.delete("/modules/{module_name}/")
+@router.delete("/modules/{module_name}/")
 def delete_module_by_name(module_name: str):
     cwd = Path.cwd()
     module_path = f"{cwd}/src/{module_name}"

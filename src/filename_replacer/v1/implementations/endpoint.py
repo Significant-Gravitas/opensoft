@@ -7,7 +7,7 @@ from typing import List, Union
 
 from src.filename_replacer.v1.abstract_class import FilenameReplacementCreate, FilenameReplacementRead
 
-filename_replacer_v1_router = APIRouter()
+router = APIRouter()
 
 
 def rename_files_in_modules(module_names: List[str], filename_contains: str, replace_with: str):
@@ -24,7 +24,7 @@ def rename_files_in_modules(module_names: List[str], filename_contains: str, rep
                     shutil.move(item.path, module_path / new_name)
 
 
-@filename_replacer_v1_router.post("/filename_replacement", response_model=Union[FilenameReplacementRead, dict])
+@router.post("/filename_replacement", response_model=Union[FilenameReplacementRead, dict])
 async def create_filename_replacements(replacement: FilenameReplacementCreate):
     # Execute filename replacements
     rename_files_in_modules(replacement.module_names, replacement.filename_contains, replacement.replace_with)

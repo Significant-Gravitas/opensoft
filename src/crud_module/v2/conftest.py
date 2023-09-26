@@ -1,9 +1,15 @@
-import asyncio
 import pytest
 from httpx import AsyncClient
+import asyncio
+
 from src.app import app
 
-@pytest.fixture(params=["http://127.0.0.1:8000/v2/b1"])
+from pathlib import Path
+
+from src.utils import get_backend_iterations
+
+
+@pytest.fixture(params=get_backend_iterations(Path(__file__).parent))
 def client(request):
     """
     Fixture that creates client for requesting server based on different base URLs.

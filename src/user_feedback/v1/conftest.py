@@ -4,9 +4,12 @@ import asyncio
 
 from src.app import app
 
+from pathlib import Path
 
-# Parameterizing the base URL
-@pytest.fixture(params=["http://127.0.0.1:8000/v1/b1", "http://127.0.0.1:8000/v1/b2"])
+from src.utils import get_backend_iterations
+
+
+@pytest.fixture(params=get_backend_iterations(Path(__file__).parent))
 def client(request):
     """
     Fixture that creates client for requesting server based on different base URLs.

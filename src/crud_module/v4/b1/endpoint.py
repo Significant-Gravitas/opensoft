@@ -4,7 +4,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, APIRouter, HTTPException
 from typing import List
-from src.crud_module.v3.abstract_class import ModuleCreate, ModuleRead
+from src.crud_module.v4.abstract_class import ModuleCreate, ModuleRead
 
 router = APIRouter()
 

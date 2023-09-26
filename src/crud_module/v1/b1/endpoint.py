@@ -25,7 +25,6 @@ def get_module_by_name(module_name: str) -> ModuleRead:
     return ModuleRead(name=module_name)
 
 
-
 @router.post("/modules/", response_model=ModuleRead)
 def create_module(module: ModuleCreate) -> dict:
     cwd = Path.cwd()

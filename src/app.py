@@ -17,12 +17,13 @@ for module_name in modules:
     for version in versions:
         # Construct the dynamic import path
         dynamic_path = f"src.{module_name}.{version}.b1.endpoint"
+        if module_name not in ["module_fixture", "fixture_to_remove", "runner_pytest"]:
 
-        # Dynamically import the module
-        module = import_module(dynamic_path)
+            # Dynamically import the module
+            module = import_module(dynamic_path)
 
-        # Include the router in the FastAPI app
-        app.include_router(getattr(module, "router"), prefix=f"/{version}")
+            # Include the router in the FastAPI app
+            app.include_router(getattr(module, "router"), prefix=f"/{version}")
 
 # Add CORS middleware
 app.add_middleware(

@@ -6,6 +6,7 @@ import pytest
 
 from src.runner_pytest.implementations.runner_pytest_1 import RunnerPytest1
 
+
 @pytest.fixture
 def runner_pytest():
     return RunnerPytest1()

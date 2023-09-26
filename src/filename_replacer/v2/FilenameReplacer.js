@@ -9,7 +9,7 @@ const FilenameReplacer = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch("http://127.0.0.1:8000/v1/b1/filename_replacement", {
+        const response = await fetch("http://127.0.0.1:8000/v2/b1/filename_replacement", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -36,7 +36,9 @@ const FilenameReplacer = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100vh'
+            minHeight: '100vh',  // Change this line
+            marginLeft: '20px',  // (if you added this from previous suggestions)
+            overflowY: 'auto'    // Allows scrolling if content is taller than container
         }}>
             <form onSubmit={handleSubmit} style={{ width: '300px', textAlign: 'center' }}>
                 <label>

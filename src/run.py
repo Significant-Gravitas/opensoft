@@ -1,3 +1,4 @@
+import asyncio
 import random
 import re
 
@@ -5,14 +6,15 @@ import click
 import pyperclip
 from fastapi import requests
 
-from src.runner_pytest.implementations.runner_pytest_1 import RunnerPytest1
-from src.utils.common import print_file_content
+from deprecated.utils.common import print_file_content
+from src.client import get_client
+from src.runner_pytest.v1.b1.endpoint import RunnerPytest1
 
 failures = []
 IMPLEMENTATION_NUMBER = 1
 
 
-def load_content_for_pass_tests_strict(module, pick_item):
+async def load_content_for_pass_tests_strict(module, pick_item):
     db_engine = print_file_content(f"src/engine.py")
     db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
     abstract_class = print_file_content(f"src/{module}/abstract_class.py")
@@ -45,27 +47,30 @@ I won't modify the tests or the abstract class or add any attributes to the exis
     return result_str
 
 
-def load_content_for_pass_tests(module, pick_item):
+async def load_content_for_pass_tests(module, pick_item):
+    parts = module.rsplit('/', 1)
+    module = parts[0]
+    backend = parts[1]
     db_engine = print_file_content(f"src/engine.py")
     db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
     abstract_class = print_file_content(f"src/{module}/abstract_class.py")
     implementation = print_file_content(
-        f"src/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
+        f"src/{module}/{backend}/endpoint.py"
     )
-    fixtures = print_file_content(f"src/{module}/conftest.py")
-    url = 'http://localhost:8000/filename_replacer/v1/filename_replacements'
+    fixtures = ""
+
+    parts = module.rsplit('/', 1)
+    module_name = parts[0]
     query_parameters = {
-        'page': 1,
-        'limit': 1,
-        'module_name': f"src/{module}",
+        'n': 0,
+        'path': f"src/{module_name}",
     }
-
-    response = requests.get(url, params=query_parameters)
-
-    if response.status_code == 200:
-        print(response.json())  # Assuming the response body contains JSON data.
-    else:
-        print(f"Failed to retrieve the URL. HTTP Status Code: {response.status_code}")
+    client = get_client("http://localhost:8000")
+    response = await client.get(
+        "v1/b1/pytest_failures/",
+        params=query_parameters
+    )
+    first_run = response.json()
 
     pytest_failure = RunnerPytest1().get_pytest_failure(
         n=int(pick_item), path=f"src/{module}"
@@ -90,7 +95,7 @@ Assistant:
     return result_str
 
 
-def load_content_for_remove_first_test(module, pick_item):
+async def load_content_for_remove_first_test(module, pick_item):
 
     test_failure, test_code = RunnerPytest1().get_pytest_failure(
         n=int(pick_item), path=f"src/{module}"
@@ -99,7 +104,7 @@ def load_content_for_remove_first_test(module, pick_item):
     return test_code
 
 
-def load_content_for_add_tests(module, only_gherkin=True):
+async def load_content_for_add_tests(module, only_gherkin=True):
     product_requirements = print_file_content(
         f"src/{module}/product_requirements.txt"
     )
@@ -161,7 +166,7 @@ This gherkin scenario is not implemented yet. I will name it test_{{scenario_nam
 
 
 
-def load_content_for_remove_tests(module):
+async def load_content_for_remove_tests(module):
     product_requirements = print_file_content(
         f"src/{module}/product_requirements.txt"
     )
@@ -195,7 +200,7 @@ Here are the tests you should be removing and why:
     return result_str
 
 
-def load_content_for_compress_tests(module):
+async def load_content_for_compress_tests(module):
     abstract_class = print_file_content(f"src/{module}/abstract_class.py")
     fixtures = print_file_content(f"src/{module}/conftest.py")
     test_positive = print_file_content(f"src/{module}/tests/test_{module}.py")
@@ -208,7 +213,7 @@ Can you make these tests shorter by adding fixtures ? Also try to reuse the same
     return result_str
 
 
-def load_content_for_fix_frontend(module):
+async def load_content_for_fix_frontend(module):
     app = print_file_content(f"src/App.js")
 
     module_frontends = print_file_content(f"src/{module}/UserFeedbackV2.js")
@@ -230,22 +235,24 @@ def load_content_for_fix_frontend(module):
     help="This is an optional argument",
 )
 def run(module, command, pick_item, result_only):
+    loop = asyncio.get_event_loop()
+
     if command == "pass_tests_strict":
-        result_str = load_content_for_pass_tests_strict(module, 0)
+        result_str = loop.run_until_complete(load_content_for_pass_tests_strict(module, 0))
     elif command == "pass_tests":
-        result_str = load_content_for_pass_tests(module, 0)
+        result_str = loop.run_until_complete(load_content_for_pass_tests(module, 0))
     elif command == "add_tests":
-        result_str = load_content_for_add_tests(module)
+        result_str = loop.run_until_complete(load_content_for_add_tests(module))
     elif command == "add_more_tests":
-        result_str = load_content_for_add_tests(module, only_gherkin=False)
+        result_str = loop.run_until_complete(load_content_for_add_tests(module, only_gherkin=False))
     elif command == "remove_tests":
-        result_str = load_content_for_remove_tests(module)
+        result_str = loop.run_until_complete(load_content_for_remove_tests(module))
     elif command == "remove_first_test":
-        result_str = load_content_for_remove_first_test(module, 0)
+        result_str = loop.run_until_complete(load_content_for_remove_first_test(module, 0))
     elif command == "compress_tests":
-        result_str = load_content_for_compress_tests(module)
+        result_str = loop.run_until_complete(load_content_for_compress_tests(module))
     elif command == "fix_frontend":
-        result_str = load_content_for_fix_frontend(module)
+        result_str = loop.run_until_complete(load_content_for_fix_frontend(module))
     else:
         raise ValueError("Unknown command")
 
@@ -253,7 +260,8 @@ def run(module, command, pick_item, result_only):
     pyperclip.copy(result_str)
 
 
-def take_percentage_of_string(s: str, percentage: float) -> str:
+
+async def take_percentage_of_string(s: str, percentage: float) -> str:
 
     if not (0 <= percentage <= 1):
         raise ValueError("Percentage must be between 0 and 1")
@@ -266,11 +274,11 @@ def take_percentage_of_string(s: str, percentage: float) -> str:
     return s[start_index : start_index + part_length]
 
 
-def extract_function_names(text):
+async def extract_function_names(text):
     pattern = re.compile(r"def test_(.*?)\(", re.DOTALL)
     matches = pattern.findall(text)
     return ", ".join(matches)
 
 
-if __name__ == "__main__":
-    run()
+# if __name__ == "__main__":
+#     asyncio.run(run())

@@ -33,12 +33,12 @@ function App() {
     return (
         <Router>
             <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-                <h1>Feedback App</h1>
-                <div style={{ display: "flex", flexGrow: 1 }}>
-                    <div style={{ flexBasis: "30%", overflowY: "auto" }}>
+                <h1>Gargantua</h1>
+                <div style={{ display: "flex", flexGrow: 1, flexWrap: 'nowrap' }}> {/* Added flexWrap */}
+                    <div style={{ flex: '0 0 30%', overflowY: "auto" }}> {/* Modified this line */}
                         <CrudModule />
                     </div>
-                    <div style={{ flexBasis: "70%", overflowY: "auto", borderLeft: "1px solid #ddd" }}>
+                    <div style={{ flex: '0 0 70%', overflowY: "auto", borderLeft: "1px solid #ddd" }}> {/* Modified this line */}
                         <Routes>
                             <Route path="/:moduleName" element={<ModuleDetail />} />
                         </Routes>
@@ -48,6 +48,7 @@ function App() {
         </Router>
     );
 }
+
 
 
 export default App;

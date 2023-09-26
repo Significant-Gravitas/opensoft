@@ -8,6 +8,7 @@ from sqlmodel import Session, SQLModel
 
 from src import engine
 from src.app import app
+from src.client import get_client
 
 
 def pytest_addoption(parser):
@@ -46,13 +47,12 @@ def client(request):
     base_url = request.param  # This is already a string URL now
 
     # Create an instance of AsyncClient with the parameterized base URL
-    ac = AsyncClient(app=app, base_url=base_url)
-
     def fin():
         # Close the client when done
         asyncio.get_event_loop().run_until_complete(ac.aclose())
 
     # Use the finalizer to ensure the client is closed after usage
+    ac = get_client(base_url)
     request.addfinalizer(fin)
 
     return ac

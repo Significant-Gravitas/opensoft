@@ -3,3 +3,4 @@ remove http://127.0.0.1:8000
 get rid of conftest.py in each version
 duplicated logic to get the backend_iterations in app.py and conftest.py
 lots of places where we parameterize the versions and backend iterations
+fix pytest_runner because the tests are flaky

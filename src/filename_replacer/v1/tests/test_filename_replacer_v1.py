@@ -5,7 +5,7 @@ from httpx import AsyncClient
 @pytest.mark.asyncio
 async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient):
     # Define the initial values
-    module_targets = ["fixture_to_remove"]
+    module_targets = ["module_fixture"]
     filename_search = "xyz"
     filename_replacement = "def"
 

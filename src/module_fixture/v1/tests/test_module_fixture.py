@@ -1,6 +1,6 @@
 import pytest
 
-from src.module_fixture.implementations.module_fixture_1 import ModuleFixture1
+from src.module_fixture.v1.b1.endpoint import ModuleFixture1
 
 
 @pytest.fixture

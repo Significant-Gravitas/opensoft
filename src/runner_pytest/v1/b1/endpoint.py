@@ -5,20 +5,31 @@ from contextlib import contextmanager
 from typing import List, Optional, Tuple
 
 import pytest
+from fastapi import APIRouter
 
-from src.runner_pytest.abstract_class import AbstractRunnerPytest
+from src.runner_pytest.v1.abstract_class import AbstractRunnerPytest
+
+# from src.runner_pytest.abstract_class import AbstractRunnerPytest
+
+router = APIRouter()
+
+
+from fastapi import Query
+
+@router.get("/pytest_failures/")
+def get_pytest_failures(n: int = Query(...), path: str = Query(...)):
+    return RunnerPytest1().get_pytest_failure(n, path)
 
 
 class RunnerPytest1(AbstractRunnerPytest):
     def __init__(self):
         self._failures = []
 
-    def get_pytest_failure(self, n: int, path: str) -> Tuple[str, str]:
+    def get_pytest_failure(self, n: int, path: str) -> str:
 
         self._run_tests(path)
         failure_detail = self._retrieve_nth_failure_result(n)
-        test_code = self._retrieve_test_code_from_failure(n)
-        return failure_detail, test_code
+        return failure_detail
 
     @contextmanager
     def _suppress_output(self):
@@ -59,51 +70,6 @@ class RunnerPytest1(AbstractRunnerPytest):
         else:
             return None
 
-    def _retrieve_test_code_from_failure(self, n: int) -> str:
-        if len(self._failures) > n:
-            report = self._failures[n]
-
-            if (
-                hasattr(report.longrepr, "reprtraceback")
-                and hasattr(report.longrepr.reprtraceback, "reprentries")
-                and report.longrepr.reprtraceback.reprentries
-            ):
-                test_code_lines = report.longrepr.reprtraceback.reprentries[0].lines
-                test_code = "\n".join(test_code_lines)
-                return test_code
-
-            test_name_raw = report.nodeid.split("::")[-1]
-            test_name_match = re.match(r"(\w+)", test_name_raw)
-            if not test_name_match:
-                return None
-            test_name = test_name_match.group(1)
-
-            test_file_path = (
-                report.longrepr.reprcrash.path
-                if hasattr(report.longrepr, "reprcrash")
-                else str(report.longrepr.filename)
-            )
-
-            with open(test_file_path, "r") as f:
-                lines = f.readlines()
-
-            test_code = ""
-            inside_test = False
-            for line in lines:
-                if f"def {test_name}(" in line:
-                    inside_test = True
-                if inside_test:
-                    test_code += line
-                if (
-                    inside_test
-                    and f"def {test_name}(" not in line
-                    and "def test_" in line
-                ):
-                    break
-
-            return test_code
-        else:
-            return None
 
     class _ResultCollector:
         def __init__(self, failures):

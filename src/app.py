@@ -17,7 +17,7 @@ for module_name in modules:
     for version in versions:
         # Construct the dynamic import path
         dynamic_path = f"src.{module_name}.{version}.b1.endpoint"
-        if module_name not in ["module_fixture", "fixture_to_remove", "runner_pytest"]:
+        if module_name not in ["module_fixture", "fixture_to_remove"]:
 
             # Dynamically import the module
             module = import_module(dynamic_path)

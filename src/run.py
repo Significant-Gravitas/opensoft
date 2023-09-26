@@ -3,6 +3,7 @@ import re
 
 import click
 import pyperclip
+from fastapi import requests
 
 from src.runner_pytest.implementations.runner_pytest_1 import RunnerPytest1
 from src.utils.common import print_file_content
@@ -23,9 +24,9 @@ def load_content_for_pass_tests_strict(module, pick_item):
         n=int(pick_item), path=f"src/{module}"
     )
 
-    if pytest_failure[0] is None:
+    if pytest_failure is None:
         print("No failure found")
-        pytest_failure = [""]
+        pytest_failure = ""
 
     instructions = """
 User:
@@ -35,11 +36,11 @@ Here is my suggestion to modify the class + the code that comes with it.
 I won't modify the tests or the abstract class or add any attributes to the existing classes
 """
     result_str = (
-        db_engine + db_hint + abstract_class + implementation + fixtures + pytest_failure[0] + instructions
+        db_engine + db_hint + abstract_class + implementation + fixtures + pytest_failure + instructions
     )
 
     if len(result_str) > 12000:
-        result_str = db_engine + db_hint + implementation + fixtures + pytest_failure[0] + instructions
+        result_str = db_engine + db_hint + implementation + fixtures + pytest_failure + instructions
 
     return result_str
 
@@ -52,13 +53,27 @@ def load_content_for_pass_tests(module, pick_item):
         f"src/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
     )
     fixtures = print_file_content(f"src/{module}/conftest.py")
+    url = 'http://localhost:8000/filename_replacer/v1/filename_replacements'
+    query_parameters = {
+        'page': 1,
+        'limit': 1,
+        'module_name': f"src/{module}",
+    }
+
+    response = requests.get(url, params=query_parameters)
+
+    if response.status_code == 200:
+        print(response.json())  # Assuming the response body contains JSON data.
+    else:
+        print(f"Failed to retrieve the URL. HTTP Status Code: {response.status_code}")
+
     pytest_failure = RunnerPytest1().get_pytest_failure(
         n=int(pick_item), path=f"src/{module}"
     )
 
-    if pytest_failure[0] is None:
+    if pytest_failure is None:
         print("No failure found")
-        pytest_failure = [""]
+        pytest_failure = ""
 
     instructions = """
 User:
@@ -66,11 +81,11 @@ Modify the class or the tests in order for the test to pass, depending on whethe
 Assistant:
 """
     result_str = (
-        db_engine + db_hint + db_engine + abstract_class + implementation + fixtures + pytest_failure[0] + instructions
+        db_engine + db_hint + db_engine + abstract_class + implementation + fixtures + pytest_failure + instructions
     )
 
     if len(result_str) > 12000:
-        result_str = db_engine + db_hint + implementation + fixtures + pytest_failure[0] + instructions
+        result_str = db_engine + db_hint + implementation + fixtures + pytest_failure + instructions
 
     return result_str
 

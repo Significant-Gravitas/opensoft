@@ -36,9 +36,11 @@ async def create_filename_replacements(replacement: FilenameReplacementCreate):
     # Execute filename replacements and gather the lists of filenames before and after
     files_before, files_after = rename_files_in_modules(replacement.module_names, replacement.filename_contains, replacement.replace_with)
 
-    response_data = replacement.dict()
-    response_data["files_replaced_before"] = files_before or []
-    response_data["files_replaced_after"] = files_after or []
-
-    return response_data
-
+    # Ensure the keys are always present in the response data
+    return {
+        "module_names": replacement.module_names,
+        "filename_contains": replacement.filename_contains,
+        "replace_with": replacement.replace_with,
+        "files_replaced_before": files_before or [],
+        "files_replaced_after": files_after or []
+    }

@@ -3,15 +3,17 @@ import pytest
 from httpx import AsyncClient
 from src.app import app
 
-@pytest.fixture
+@pytest.fixture(params=["http://127.0.0.1:8000/v2/b1"])
 def client(request):
     """
-    Fixture that creates client for requesting server.
+    Fixture that creates client for requesting server based on different base URLs.
 
     :return: client for the app.
     """
-    # Create an instance of AsyncClient
-    ac = AsyncClient(app=app, base_url="http://127.0.0.1:8000/v2")
+    base_url = request.param  # Retrieve the current parameter
+
+    # Create an instance of AsyncClient with the parameterized base URL
+    ac = AsyncClient(app=app, base_url=base_url)
 
     def fin():
         # Close the client when done

@@ -1,0 +1,3 @@
+v1/modules => crud_module/v1/modules
+remove http://127.0.0.1:8000
+get rid of conftest.py in each version

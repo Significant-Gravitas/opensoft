@@ -8,26 +8,8 @@ def module_fixture():
     return ModuleFixture1()
 
 @pytest.mark.mock
-def test_sould_succeed_one(module_fixture):
-    assert True
-
-
-@pytest.mark.mock
-def test_sould_succeed_two(module_fixture):
-    assert True
-
-import pytest
-
-
-@pytest.mark.mock
-def test_sould_succeed_three(module_fixture):
-    assert True
-
-
-@pytest.mark.mock
 def test_should_fail_one(module_fixture):
     assert False
-
 
 @pytest.mark.mock
 def test_should_fail_two(module_fixture):

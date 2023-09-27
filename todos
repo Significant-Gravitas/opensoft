@@ -13,3 +13,4 @@ pass_tests and all that => start using the api + create a module + add directly 
 cleanup root of src
 make sure all resources plural
 add created_at timestamps to all the fields
+module linter => start with filenames

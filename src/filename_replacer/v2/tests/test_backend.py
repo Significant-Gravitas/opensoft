@@ -33,9 +33,9 @@ async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient
     assert response_data["filename_contains"] == filename_search
     assert response_data["replace_with"] == filename_replacement
 
-    # Assert for files_replaced_before and files_replaced_after (if you want to check their existence)
+    # Assert for files_replaced_before and files_replaced_after
     assert "files_replaced_before" in response_data
-    assert all(filename_search in file for file in response_data["data"]["files_replaced_before"])
+    assert all(filename_search in file for file in response_data["files_replaced_before"])
 
     # Ensure every file in files_replaced_after contains the replacement substring
     assert "files_replaced_after" in response_data

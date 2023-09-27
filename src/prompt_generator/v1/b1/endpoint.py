@@ -15,27 +15,28 @@ router = APIRouter()
 @router.post("/prompts", response_model=PromptRead)
 async def create_filename_replacements(body: PromptCreate):
     if body.goal == "pass_tests":
-        module = body.module_backend
-        parts = module.rsplit('/', 1)
-        module = parts[0]
-        backend = parts[1]
+        parts = body.module_backend.rsplit('/', 2)
+        module_name = parts[0]
+        module_version = parts[1]
+        backend_iteration = parts[2]
         db_engine = print_file_content(f"src/engine.py")
         db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
-        abstract_class = print_file_content(f"src/{module}/abstract_class.py")
+        abstract_class = print_file_content(f"src/{module_name}/{module_version}/abstract_class.py")
         implementation = print_file_content(
-            f"src/{module}/{backend}/endpoint.py"
+            f"src/{module_name}/{module_version}/{backend_iteration}/endpoint.py"
+        )
+        test = print_file_content(
+            f"src/{module_name}/{module_version}/tests/test_backend.py"
         )
         fixtures = ""
 
-        parts = module.rsplit('/', 1)
-        module_name = parts[0]
         query_parameters = {
             'n': 0,
             'path': f"src/{module_name}",
         }
         client = get_client("http://localhost:8000")
         response = await client.get(
-            "v1/b1/pytest_failures/",
+            f"v1/b1/pytest_failures/",
             params=query_parameters
         )
         pytest_failure = response.json()
@@ -54,11 +55,11 @@ async def create_filename_replacements(body: PromptCreate):
     Assistant:
     """
         result_str = (
-            db_engine + db_hint + db_engine + abstract_class + implementation + fixtures + pytest_failure + instructions
+            db_engine + db_hint + db_engine + abstract_class + implementation + fixtures + test + pytest_failure + instructions
         )
 
         if len(result_str) > 12000:
-            result_str = db_engine + db_hint + implementation + fixtures + pytest_failure + instructions
+            result_str = db_engine + db_hint + implementation + fixtures + test + pytest_failure + instructions
 
         return PromptRead(
             module_backend=body.module_backend,

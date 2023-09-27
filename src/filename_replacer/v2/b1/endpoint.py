@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import FastAPI, APIRouter, HTTPException
 from typing import List, Union
 
-from src.filename_replacer.v1.abstract_class import FilenameReplacementCreate, FilenameReplacementRead
+from src.filename_replacer.v2.abstract_class import FilenameReplacementRead, FilenameReplacementCreate
 
 router = APIRouter()
 
@@ -37,10 +37,10 @@ async def create_filename_replacements(replacement: FilenameReplacementCreate):
     files_before, files_after = rename_files_in_modules(replacement.module_names, replacement.filename_contains, replacement.replace_with)
 
     # Ensure the keys are always present in the response data
-    return {
+    return FilenameReplacementRead.parse_obj({
         "module_names": replacement.module_names,
         "filename_contains": replacement.filename_contains,
         "replace_with": replacement.replace_with,
-        "files_replaced_before": files_before or [],
-        "files_replaced_after": files_after or []
-    }
+        "files_replaced_before": files_before or [], # Ensure this is always a list
+        "files_replaced_after": files_after or []    # Ensure this is always a list
+    })

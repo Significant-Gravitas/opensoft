@@ -14,3 +14,4 @@ cleanup root of src
 make sure all resources plural
 add created_at timestamps to all the fields
 module linter => start with filenames
+admin system, so regular users only see what's useful => aka creating new modules

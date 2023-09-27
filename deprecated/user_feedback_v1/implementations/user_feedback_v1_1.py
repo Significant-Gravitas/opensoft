@@ -1,10 +1,10 @@
 from abc import abstractmethod
 
 from src import engine
-from src.user_feedback_v1.abstract_class import AbstractUserFeedbackV1, FeedbackCreate, FeedbackRead, Feedback, app
+from src.user_feedback_v1.models import AbstractUserFeedbackV1, FeedbackCreate, FeedbackRead, Feedback, app
 
 from sqlmodel import Session
-from src.user_feedback_v1.abstract_class import AbstractUserFeedbackV1, FeedbackCreate, FeedbackRead
+from src.user_feedback_v1.models import AbstractUserFeedbackV1, FeedbackCreate, FeedbackRead
 
 
 

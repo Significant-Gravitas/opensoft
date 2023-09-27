@@ -1,6 +1,6 @@
 # import pytest
 #
-# from src.battleship_v3.abstract_class import (
+# from src.battleship_v3.models import (
 #     Direction,
 #     GameStatusEnum,
 #     ShipPlacement,
@@ -45,7 +45,7 @@
 #         pass
 #
 #
-# from src.battleship_v3.abstract_class import ShipType, Turn
+# from src.battleship_v3.models import ShipType, Turn
 #
 #
 # def test_guessing_a_grid_square(battleship_v3, player1, player2, game, place_all_ships):
@@ -75,7 +75,7 @@
 #     assert result1 == TurnResult.HIT
 #
 #
-# from src.battleship_v3.abstract_class import (
+# from src.battleship_v3.models import (
 #     Direction,
 #     ShipPlacement,
 #     ShipType,
@@ -112,7 +112,7 @@
 #     assert result4 == TurnResult.SUNK
 #
 #
-# from src.battleship_v3.abstract_class import (
+# from src.battleship_v3.models import (
 #     Direction,
 #     ShipPlacement,
 #     ShipType,
@@ -152,7 +152,7 @@
 #     assert game_status.status != GameStatusEnum.ONGOING
 #
 #
-# from src.battleship_v3.abstract_class import (
+# from src.battleship_v3.models import (
 #     Direction,
 #     GameStatusEnum,
 #     ShipPlacement,
@@ -188,7 +188,7 @@
 #         )
 #
 #
-# from src.battleship_v3.abstract_class import GameStatusEnum
+# from src.battleship_v3.models import GameStatusEnum
 #
 #
 # def test_prevent_hitting_ships_before_placement(battleship_v3, player1, player2, game):

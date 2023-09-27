@@ -7,9 +7,9 @@ from typing import List, Optional, Tuple
 import pytest
 from fastapi import APIRouter
 
-from src.runner_pytest.v1.abstract_class import AbstractRunnerPytest
+from src.runner_pytest.v1.models import AbstractRunnerPytest
 
-# from src.runner_pytest.abstract_class import AbstractRunnerPytest
+# from src.runner_pytest.models import AbstractRunnerPytest
 
 router = APIRouter()
 

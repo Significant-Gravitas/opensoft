@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.module_fixture.v1.abstract_class import AbstractModuleFixture
+from src.module_fixture.v1.models import AbstractModuleFixture
 
 router = APIRouter()
 

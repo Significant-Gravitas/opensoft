@@ -7,7 +7,7 @@ from typing import List, Union
 
 from src.client import get_client
 from src.common import print_file_content
-from src.prompt_generator.v1.abstract_class import PromptRead, PromptCreate
+from src.prompt_generator.v1.models import PromptRead, PromptCreate
 
 router = APIRouter()
 
@@ -21,7 +21,7 @@ async def create_filename_replacements(body: PromptCreate):
         backend_iteration = parts[2]
         db_engine = print_file_content(f"src/engine.py")
         db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
-        abstract_class = print_file_content(f"src/{module_name}/{module_version}/abstract_class.py")
+        models = print_file_content(f"src/{module_name}/{module_version}/models.py")
         implementation = print_file_content(
             f"src/{module_name}/{module_version}/{backend_iteration}/endpoint.py"
         )
@@ -55,7 +55,7 @@ async def create_filename_replacements(body: PromptCreate):
     Assistant:
     """
         result_str = (
-            db_engine + db_hint + db_engine + abstract_class + implementation + fixtures + test + pytest_failure + instructions
+            db_engine + db_hint + db_engine + models + implementation + fixtures + test + pytest_failure + instructions
         )
 
         if len(result_str) > 12000:

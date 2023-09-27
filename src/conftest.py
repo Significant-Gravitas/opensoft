@@ -65,7 +65,7 @@ def pytest_runtest_setup(item):
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_db_session():
-    from src.user_feedback.v1 import abstract_class
+    from src.user_feedback.v1 import models
 
     SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)

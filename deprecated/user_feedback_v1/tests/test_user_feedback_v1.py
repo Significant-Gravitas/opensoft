@@ -1,4 +1,4 @@
-# from src.user_feedback_v1.abstract_class import FeedbackCreate
+# from src.user_feedback_v1.models import FeedbackCreate
 # import pytest
 
 
@@ -21,7 +21,7 @@
 #     # we might need to modify the system's functionality to return a success message or omit this line.
 #     # assert "Success" in saved_feedback.message
 #
-# from src.user_feedback_v1.abstract_class import FeedbackCreate
+# from src.user_feedback_v1.models import FeedbackCreate
 #
 # # This test is for the scenario "Submitting Feedback with invalid content"
 # def test_submitting_feedback_with_invalid_content(user_feedback_v1):

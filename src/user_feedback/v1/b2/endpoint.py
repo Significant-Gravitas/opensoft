@@ -5,7 +5,7 @@ from fastapi import Depends, APIRouter
 from sqlmodel import Session
 
 from src import engine
-from src.user_feedback.v1.abstract_class import FeedbackRead, FeedbackCreate, Feedback
+from src.user_feedback.v1.models import FeedbackRead, FeedbackCreate, Feedback
 
 
 from fastapi import Depends, APIRouter, HTTPException

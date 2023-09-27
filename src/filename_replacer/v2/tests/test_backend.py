@@ -11,7 +11,7 @@ from httpx import AsyncClient
 async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient):
     # Define the initial values
     module_targets = ["module_fixture"]
-    filename_search = "abstract_class"
+    filename_search = "models"
     filename_replacement = "class_abstract"
 
     # Send a request to the API with the improved payload

@@ -1,6 +1,6 @@
 import pytest
 
-from src.battleship.abstract_class import ShipPlacement, Turn
+from src.battleship.models import ShipPlacement, Turn
 
 
 @pytest.fixture

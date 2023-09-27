@@ -1,6 +1,6 @@
 import uuid
 
-from src.battleship.abstract_class import (
+from src.battleship.models import (
     AbstractBattleship,
     Game,
     GameStatus,

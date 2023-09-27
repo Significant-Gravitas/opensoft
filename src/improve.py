@@ -24,7 +24,7 @@ def run(module, command, pick_item, result_only):
     if result_only:
         result_str = result_only(n)
     else:
-        result_str = print_file_content(f"src/{module}/abstract_class.py")
+        result_str = print_file_content(f"src/{module}/models.py")
         result_str += print_file_content(
             f"src/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
         )

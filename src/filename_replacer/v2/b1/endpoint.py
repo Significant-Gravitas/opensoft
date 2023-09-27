@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import FastAPI, APIRouter, HTTPException
 from typing import List, Union
 
-from src.filename_replacer.v2.abstract_class import FilenameReplacementRead, FilenameReplacementCreate
+from src.filename_replacer.v2.models import FilenameReplacementRead, FilenameReplacementCreate
 
 router = APIRouter()
 

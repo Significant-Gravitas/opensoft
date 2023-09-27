@@ -5,7 +5,6 @@ remove negative tests
 use models for abstract class
 automatically import models for sqlalchemy
 
-pass_tests and all that => start using the api + create a module + add directly in the frontend
 cleanup root of src
 make sure all resources plural
 add created_at timestamps to all the fields

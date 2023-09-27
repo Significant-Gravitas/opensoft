@@ -1,4 +1,4 @@
-from src.battleship.abstract_class import AbstractBattleship, Game, TurnResponse, GameStatus, ShipPlacement, Turn
+from src.battleship.models import AbstractBattleship, Game, TurnResponse, GameStatus, ShipPlacement, Turn
 class Battleship4(AbstractBattleship):
     def __init__(self):
         self.games = {}

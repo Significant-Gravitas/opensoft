@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from src.battleship.abstract_class import ShipPlacement, Turn
+from src.battleship.models import ShipPlacement, Turn
 
 
 def test_ship_placement_out_of_bounds(battleship):

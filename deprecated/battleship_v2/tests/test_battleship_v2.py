@@ -1,6 +1,6 @@
 # import pytest
 #
-# from src.battleship_v2.abstract_class import (
+# from src.battleship_v2.models import (
 #     Direction,
 #     GameStatusEnum,
 #     ShipPlacement,

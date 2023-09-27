@@ -27,7 +27,7 @@ if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[2] == "result_only":
         result_str = result_only(n)
     else:
-        result_str = print_file_content(f"{MODULE}/abstract_class.py")
+        result_str = print_file_content(f"{MODULE}/models.py")
         result_str += print_file_content(
             f"{MODULE}/implementations/{MODULE}_{IMPLEMENTATION_NUMBER}.py"
         )

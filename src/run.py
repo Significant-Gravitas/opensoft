@@ -17,7 +17,7 @@ IMPLEMENTATION_NUMBER = 1
 async def load_content_for_pass_tests_strict(module, pick_item):
     db_engine = print_file_content(f"src/engine.py")
     db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
-    abstract_class = print_file_content(f"src/{module}/abstract_class.py")
+    models = print_file_content(f"src/{module}/models.py")
     implementation = print_file_content(
         f"src/{module}/implementations/{module}_{IMPLEMENTATION_NUMBER}.py"
     )
@@ -38,7 +38,7 @@ Here is my suggestion to modify the class + the code that comes with it.
 I won't modify the tests or the abstract class or add any attributes to the existing classes
 """
     result_str = (
-        db_engine + db_hint + abstract_class + implementation + fixtures + pytest_failure + instructions
+        db_engine + db_hint + models + implementation + fixtures + pytest_failure + instructions
     )
 
     if len(result_str) > 12000:
@@ -53,7 +53,7 @@ async def load_content_for_pass_tests(module, pick_item):
     backend = parts[1]
     db_engine = print_file_content(f"src/engine.py")
     db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
-    abstract_class = print_file_content(f"src/{module}/abstract_class.py")
+    models = print_file_content(f"src/{module}/models.py")
     implementation = print_file_content(
         f"src/{module}/{backend}/endpoint.py"
     )
@@ -86,7 +86,7 @@ Modify the class or the tests in order for the test to pass, depending on whethe
 Assistant:
 """
     result_str = (
-        db_engine + db_hint + db_engine + abstract_class + implementation + fixtures + pytest_failure + instructions
+        db_engine + db_hint + db_engine + models + implementation + fixtures + pytest_failure + instructions
     )
 
     if len(result_str) > 12000:
@@ -109,7 +109,7 @@ async def load_content_for_add_tests(module, only_gherkin=True):
         f"src/{module}/product_requirements.txt"
     )
     user_stories = print_file_content(f"src/{module}/user_stories.txt")
-    abstract_class = print_file_content(f"src/{module}/abstract_class.py")
+    models = print_file_content(f"src/{module}/models.py")
     fixtures = print_file_content(f"src/{module}/conftest.py")
     tests = print_file_content(f"src/{module}/tests/test_{module}.py")
     if only_gherkin:
@@ -125,7 +125,7 @@ This gherkin scenario is not implemented yet. I will name it test_{{scenario_nam
     result_str = (
         product_requirements
         + user_stories
-        + abstract_class
+        + models
         + fixtures
         + tests
         + instructions
@@ -139,7 +139,7 @@ This gherkin scenario is not implemented yet. I will name it test_{{scenario_nam
         result_str = (
             product_requirements
             + user_stories
-            + abstract_class
+            + models
             + fixtures
             + take_percentage_of_string(tests, 0.5)
             + tests_implemented
@@ -153,7 +153,7 @@ This gherkin scenario is not implemented yet. I will name it test_{{scenario_nam
             result_str = (
                 product_requirements
                 + user_stories
-                + abstract_class
+                + models
                 + fixtures
                 + take_percentage_of_string(tests, 0.2)
                 + tests_implemented
@@ -171,7 +171,7 @@ async def load_content_for_remove_tests(module):
         f"src/{module}/product_requirements.txt"
     )
     user_stories = print_file_content(f"src/{module}/user_stories.txt")
-    abstract_class = print_file_content(f"src/{module}/abstract_class.py")
+    models = print_file_content(f"src/{module}/models.py")
     fixtures = print_file_content(f"src/{module}/conftest.py")
     test_positive = print_file_content(f"src/{module}/tests/test_{module}.py")
     instructions = """
@@ -183,7 +183,7 @@ Here are the tests you should be removing and why:
     result_str = (
         product_requirements
         + user_stories
-        + abstract_class
+        + models
         + fixtures
         + test_positive
         + instructions
@@ -192,7 +192,7 @@ Here are the tests you should be removing and why:
     if len(result_str) > 12000:
         print("Prompt Length Before:", len(result_str))
         result_str = (
-            user_stories + abstract_class + fixtures + test_positive + instructions
+            user_stories + models + fixtures + test_positive + instructions
         )
         if len(result_str) > 12000:
             raise Exception("Prompt too long")
@@ -201,14 +201,14 @@ Here are the tests you should be removing and why:
 
 
 async def load_content_for_compress_tests(module):
-    abstract_class = print_file_content(f"src/{module}/abstract_class.py")
+    models = print_file_content(f"src/{module}/models.py")
     fixtures = print_file_content(f"src/{module}/conftest.py")
     test_positive = print_file_content(f"src/{module}/tests/test_{module}.py")
     instructions = """
 INSTRUCTIONS:
 Can you make these tests shorter by adding fixtures ? Also try to reuse the same fixtures
 """
-    result_str = abstract_class + fixtures + test_positive + instructions
+    result_str = models + fixtures + test_positive + instructions
 
     return result_str
 

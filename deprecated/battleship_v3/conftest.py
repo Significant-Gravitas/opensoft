@@ -1,6 +1,6 @@
 import pytest
 
-from src.battleship_v3.abstract_class import Player
+from src.battleship_v3.models import Player
 
 
 @pytest.fixture
@@ -28,7 +28,7 @@ def game(player1, player2, battleship_v3):
 
 import pytest
 
-from src.battleship_v3.abstract_class import Direction, ShipPlacement, ShipType
+from src.battleship_v3.models import Direction, ShipPlacement, ShipType
 
 
 @pytest.fixture

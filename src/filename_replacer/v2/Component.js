@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const FilenameReplacer = () => {
+const Component = () => {
     const [moduleTargets, setModuleTargets] = useState(["fixture_to_remove"]);
     const [filenameSearch, setFilenameSearch] = useState("xyz");
     const [filenameReplacement, setFilenameReplacement] = useState("def");
@@ -75,4 +75,4 @@ const FilenameReplacer = () => {
     );
 };
 
-export default FilenameReplacer;
+export default Component;

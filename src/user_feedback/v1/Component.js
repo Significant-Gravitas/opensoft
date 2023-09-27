@@ -7,7 +7,7 @@ const UserFeedbackV1 = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch("http://127.0.0.1:8000/v1/user_feedback/", {
+        const response = await fetch("http://127.0.0.1:8000/v1/b1/user_feedback/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -1,9 +1,5 @@
-v1/modules => crud_module/v1/modules
-remove http://127.0.0.1:8000
-get rid of conftest.py in each version
-duplicated logic to get the backend_iterations in app.py and conftest.py
-lots of places where we parameterize the versions and backend iterations
-fix pytest_runner because the tests are flaky
+standardize versions and backend in component.js
+use component.js
 file names should be the same on all modules.
 remove negative tests
 use models for abstract class
@@ -15,3 +11,10 @@ make sure all resources plural
 add created_at timestamps to all the fields
 module linter => start with filenames
 admin system, so regular users only see what's useful => aka creating new modules
+
+
+v1/modules => crud_module/v1/modules
+remove http://127.0.0.1:8000
+
+duplicated logic to get the backend_iterations in app.py and conftest.py
+lots of places where we parameterize the versions and backend iterations

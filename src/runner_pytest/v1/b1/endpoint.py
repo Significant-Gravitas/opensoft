@@ -17,8 +17,9 @@ router = APIRouter()
 from fastapi import Query
 
 @router.get("/pytest_failures/")
-def get_pytest_failures(n: int = Query(...), path: str = Query(...)):
+def get_pytest_failures(n: int = Query(...), path: Optional[str] = None):
     return RunnerPytest1().get_pytest_failure(n, path)
+
 
 
 class RunnerPytest1(AbstractRunnerPytest):
@@ -50,17 +51,18 @@ class RunnerPytest1(AbstractRunnerPytest):
         return [test_path, f"--implementation={implementation}"]
 
     def _run_tests(
-        self, test_path: str, implementation_number: Optional[int] = None
+        self, test_path: str = None, implementation_number: Optional[int] = None  # Make test_path default to None
     ) -> None:
 
         with self._suppress_output():
-            test_path = os.path.relpath(test_path, os.getcwd())
+            if test_path:  # Only adjust the path if it's provided
+                test_path = os.path.relpath(test_path, os.getcwd())
 
             plugins = [self._ResultCollector(self._failures)]
             current_file_dir = os.path.dirname(os.path.realpath(__file__))
             parent_dir = os.path.dirname(current_file_dir)
 
-            pytest_args = [test_path, "--mock"]
+            pytest_args = [test_path, "--mock"] if test_path else ["--mock"]  # Adjust pytest arguments based on test_path
 
             pytest.main(pytest_args, plugins=plugins)
 

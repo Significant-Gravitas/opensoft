@@ -127,3 +127,17 @@ async def test_empty_test_file(client):
     )
     result = response.json()
     assert result is None
+
+@pytest.mark.asyncio
+async def test_without_path_provided(client):
+    query_parameters = {
+        'n': 0
+    }
+
+    response = await client.get(
+        "/pytest_failures/",
+        params=query_parameters
+    )
+
+    assert response.status_code == 200
+    result = response.json()

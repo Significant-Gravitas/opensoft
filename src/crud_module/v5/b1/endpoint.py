@@ -43,9 +43,10 @@ def get_modules() -> List[ModuleRead]:
 @router.get("/modules/{module_name}/")
 def get_module_by_name(module_name: str) -> ModuleRead:
     all_modules = get_all_modules()
-    if module_name not in [module.name for module in all_modules]:
-        raise HTTPException(status_code=404, detail="Module not found")
-    return ModuleRead(name=module_name)
+    for module in all_modules:
+        if module.name == module_name:
+            return module
+    raise HTTPException(status_code=404, detail="Module not found")
 
 
 @router.post("/modules/", response_model=ModuleRead)

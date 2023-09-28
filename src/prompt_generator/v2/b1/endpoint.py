@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 from src.common import print_file_content
@@ -10,6 +9,7 @@ router = APIRouter()
 @router.post("/prompts", response_model=PromptRead)
 async def create_filename_replacements(body: PromptCreate):
     from src.client import get_client
+
     if body.goal == "pass_tests":
         parts = body.module_backend.rsplit("/", 2)
         module_name = parts[0]

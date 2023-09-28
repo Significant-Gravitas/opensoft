@@ -13,5 +13,5 @@ async def test_prompt_creation(client: AsyncClient):
     assert response.status_code == 200
     response_data = response.json()
 
-    assert "E       " in response_data["prompt"]
-    assert ">       " in response_data["prompt"]
+    assert "AssertionError" in response_data["prompt"]
+    assert "assert False" in response_data["prompt"]

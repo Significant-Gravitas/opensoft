@@ -22,10 +22,6 @@ class ModuleCreate(ModuleBase):
     pass
 
 
-class ModuleCreate(ModuleBase):
-    pass
-
-
 # the following acts as an contract for the routes
 
 # @app.post("/modules/", response_model=ModuleRead)

@@ -1,4 +1,3 @@
-
 from httpx import AsyncClient
 
 from src.app import app

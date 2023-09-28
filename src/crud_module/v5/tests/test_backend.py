@@ -31,6 +31,7 @@ async def test_module_lifecycle(client):
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == module_name
+    assert data["version"].startswith("v")  # Ensure that version starts with 'v'
 
     # 3. List modules after creating
     response = await client.get("/modules/")

@@ -33,7 +33,7 @@ function App() {
     return (
         <Router>
             <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-                <h1>Gargantua</h1>
+                <h1>Iterface</h1>
                 <div style={{ display: "flex", flexGrow: 1, flexWrap: 'nowrap' }}> {/* Added flexWrap */}
                     <div style={{ flex: '0 0 30%', overflowY: "auto" }}> {/* Modified this line */}
                         <Component />

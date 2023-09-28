@@ -11,7 +11,7 @@ function CrudModule() {
 
     useEffect(() => {
         // Fetch all the modules from the backend when component mounts
-        fetch('http://127.0.0.1:8000/v2/modules/')
+        fetch('http://127.0.0.1:8000/v2/b1/modules/')
         .then(response => response.json())
         .then(data => {
             setModules(data);

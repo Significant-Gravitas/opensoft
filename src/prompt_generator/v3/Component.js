@@ -1,21 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const Component = ({ moduleName }) => {
-    const [moduleBackend, setModuleBackend] = useState(moduleName || "");
+const Component = ({ modules }) => {
+    const [moduleBackend, setModuleBackend] = useState("");
     const [goal, setGoal] = useState("");
     const [message, setMessage] = useState("");
     const [promptResponse, setPromptResponse] = useState("");
+    const [selectedModule, setSelectedModule] = useState("");
 
     useEffect(() => {
-            if (moduleName) {
-                setModuleBackend(moduleName);
-            }
-        }, [moduleName]);
+        if (modules.length) {
+            setSelectedModule(modules[0].name);
+        }
+    }, [modules]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch("http://127.0.0.1:8000/v1/b1/prompts", {
+        const response = await fetch("http://127.0.0.1:8000/v3/b1/prompts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -70,36 +71,26 @@ const Component = ({ moduleName }) => {
 
     return (
         <div
-            ref={componentRef}
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                minHeight: '100vh',
-                marginLeft: '20px',
-                overflowY: 'auto',
-                width: '100%',
-            }}>
+            // ... existing code ...
+        >
             <form onSubmit={handleSubmit} style={{ width: '300px', textAlign: 'center' }}>
                 <label>
                     Module Backend:
-                    <input
-                        type="text"
-                        value={moduleBackend}
-                        onChange={(e) => setModuleBackend(e.target.value)}
+                    <select
+                        value={selectedModule}
+                        onChange={(e) => setSelectedModule(e.target.value)}
                         style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}
-                    />
+                    >
+                        {modules.map(module => (
+                            <option key={module.name} value={module.name}>
+                                {module.name}
+                            </option>
+                        ))}
+                    </select>
                 </label>
                 <button type="submit">pass_tests</button>
             </form>
-            {message && <p>{message}</p>}
-            {promptResponse && (
-            <div ref={componentRef} style={{ textAlign: 'center', width: '100%' }}>
-                <pre style={{ display: 'inline-block', textAlign: 'left' }}>{promptResponse}</pre>
-            </div>
-            )}
-
+            {/* ... rest of the return code ... */}
         </div>
     );
 };

@@ -9,7 +9,7 @@ const PromptCreation = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch("http://127.0.0.1:8000/v1/b1/prompts", {
+        const response = await fetch("http://127.0.0.1:8000/v2/b1/prompts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import Component from "./crud_module/v3/Component";
+import Component from "./crud_module/v5/Component";
 import { useParams } from "react-router-dom";
 
 function toCamelCase(str) {

@@ -1,11 +1,13 @@
-from abc import ABC, abstractmethod
-from typing import Tuple
+from abc import ABC
 
 
 class PytestFailureBase(ABC):
     pass
+
+
 class PytestFailureRead(PytestFailureBase):
     pass
+
 
 class PytestFailureCreate(PytestFailureBase):
     pass

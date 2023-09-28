@@ -1,15 +1,21 @@
 import os
 import shutil
 from pathlib import Path
+from typing import List
 
-from fastapi import FastAPI, APIRouter, HTTPException
-from typing import List, Union
+from fastapi import APIRouter
 
-from src.filename_replacer.v2.models import FilenameReplacementRead, FilenameReplacementCreate
+from src.filename_replacer.v2.models import (
+    FilenameReplacementCreate,
+    FilenameReplacementRead,
+)
 
 router = APIRouter()
 
-def rename_files_in_modules(module_names: List[str], filename_contains: str, replace_with: str) -> (List[str], List[str]):
+
+def rename_files_in_modules(
+    module_names: List[str], filename_contains: str, replace_with: str
+) -> (List[str], List[str]):
     cwd = Path.cwd()
     modules_dir = Path(f"{cwd}/src")  # Convert string to a Path object
 
@@ -30,17 +36,22 @@ def rename_files_in_modules(module_names: List[str], filename_contains: str, rep
     return files_before, files_after
 
 
-
 @router.post("/filename_replacement", response_model=FilenameReplacementRead)
 async def create_filename_replacements(replacement: FilenameReplacementCreate):
     # Execute filename replacements and gather the lists of filenames before and after
-    files_before, files_after = rename_files_in_modules(replacement.module_names, replacement.filename_contains, replacement.replace_with)
+    files_before, files_after = rename_files_in_modules(
+        replacement.module_names,
+        replacement.filename_contains,
+        replacement.replace_with,
+    )
 
     # Ensure the keys are always present in the response data
-    return FilenameReplacementRead.parse_obj({
-        "module_names": replacement.module_names,
-        "filename_contains": replacement.filename_contains,
-        "replace_with": replacement.replace_with,
-        "files_replaced_before": files_before or [], # Ensure this is always a list
-        "files_replaced_after": files_after or []    # Ensure this is always a list
-    })
+    return FilenameReplacementRead.parse_obj(
+        {
+            "module_names": replacement.module_names,
+            "filename_contains": replacement.filename_contains,
+            "replace_with": replacement.replace_with,
+            "files_replaced_before": files_before or [],  # Ensure this is always a list
+            "files_replaced_after": files_after or [],  # Ensure this is always a list
+        }
+    )

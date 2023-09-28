@@ -23,9 +23,7 @@ class ConfiguratorPytest1(AbstractConfiguratorPytest):
 
         implementations = self._discover_implementations(folder)
 
-        to_parameterize = self._determine_parameterization(
-            implementations
-        )
+        to_parameterize = self._determine_parameterization(implementations)
 
         module = folder.split("/")[-1]
 

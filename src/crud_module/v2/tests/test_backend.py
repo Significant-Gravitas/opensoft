@@ -1,12 +1,10 @@
-import asyncio
 import os
+import shutil
 
 import pytest
-from httpx import AsyncClient
+
 from src.app import app  # Ensure this is the correct import path
 
-import pytest
-import shutil
 
 @pytest.mark.asyncio
 async def test_module_lifecycle(client):
@@ -39,7 +37,9 @@ async def test_module_lifecycle(client):
     assert response.status_code == 200  # Assuming 200 for success
     post_creation_modules = response.json()
     post_creation_count = len(post_creation_modules)
-    assert post_creation_count == initial_count + 1, f"Expected module count to increase by 1, but it increased by {post_creation_count - initial_count}"
+    assert (
+        post_creation_count == initial_count + 1
+    ), f"Expected module count to increase by 1, but it increased by {post_creation_count - initial_count}"
 
     # 4. Try to get the module after creation to ensure it's there
     response = await client.get(f"/modules/{module_name}/")
@@ -55,6 +55,7 @@ async def test_module_lifecycle(client):
     response = await client.get(f"/modules/{module_name}/")
     assert response.status_code == 404  # Assuming 404 for not found
 
+
 @pytest.mark.asyncio
 async def test_default_module_listing_order(client):
     # Step: Ask for the list of modules without specifying a sort order
@@ -66,4 +67,6 @@ async def test_default_module_listing_order(client):
     actual_order = [module["name"] for module in modules_list]
 
     # Check if the list is sorted in a case-insensitive manner
-    assert actual_order == sorted(actual_order, key=str.lower), f"Expected the list to be sorted, but got {actual_order}"
+    assert actual_order == sorted(
+        actual_order, key=str.lower
+    ), f"Expected the list to be sorted, but got {actual_order}"

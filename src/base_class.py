@@ -20,7 +20,9 @@ class BaseClass:
             ]
 
             new_public_methods_attributes = [
-                m for m in new_attributes if callable(getattr(cls, m)) and not m.startswith("_")
+                m
+                for m in new_attributes
+                if callable(getattr(cls, m)) and not m.startswith("_")
             ]
             general_message = "Public or Private Attributes are completely forbidden, as well as new public methods. Use the database to save states."
             if new_private_attributes:

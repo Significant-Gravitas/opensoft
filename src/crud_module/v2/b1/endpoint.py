@@ -1,12 +1,14 @@
 import os
 import shutil
 from pathlib import Path
-
-from fastapi import FastAPI, APIRouter, HTTPException
 from typing import List
+
+from fastapi import APIRouter, HTTPException
+
 from src.crud_module.v2.models import ModuleCreate, ModuleRead
 
 router = APIRouter()
+
 
 def get_all_modules():
     cwd = Path.cwd()
@@ -15,14 +17,20 @@ def get_all_modules():
     # Exclude certain directories like "__pycache__"
     exclude_dirs = {"__pycache__"}
 
-    modules = [ModuleRead(name=item.name) for item in os.scandir(modules_dir) if item.is_dir() and item.name not in exclude_dirs]
-    return sorted(modules, key=lambda x: x.name.lower())  # Ensure sorting is case-insensitive
-
+    modules = [
+        ModuleRead(name=item.name)
+        for item in os.scandir(modules_dir)
+        if item.is_dir() and item.name not in exclude_dirs
+    ]
+    return sorted(
+        modules, key=lambda x: x.name.lower()
+    )  # Ensure sorting is case-insensitive
 
 
 @router.get("/modules/")
 def get_modules() -> List[ModuleRead]:
     return get_all_modules()
+
 
 @router.get("/modules/{module_name}/")
 def get_module_by_name(module_name: str) -> ModuleRead:
@@ -31,6 +39,7 @@ def get_module_by_name(module_name: str) -> ModuleRead:
         raise HTTPException(status_code=404, detail="Module not found")
     return ModuleRead(name=module_name)
 
+
 @router.post("/modules/", response_model=ModuleRead)
 def create_module(module: ModuleCreate) -> dict:
     cwd = Path.cwd()
@@ -38,9 +47,10 @@ def create_module(module: ModuleCreate) -> dict:
     if not os.path.exists(folder):
         os.makedirs(folder)
         path = os.path.join(folder, "__init__.py")
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             f.write("")
     return ModuleRead(name=module.name)
+
 
 @router.delete("/modules/{module_name}/")
 def delete_module_by_name(module_name: str):

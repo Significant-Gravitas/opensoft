@@ -1,16 +1,21 @@
 import os
 import shutil
 from pathlib import Path
-
-from fastapi import FastAPI, APIRouter, HTTPException
 from typing import List, Union
 
-from src.filename_replacer.v1.models import FilenameReplacementCreate, FilenameReplacementRead
+from fastapi import APIRouter
+
+from src.filename_replacer.v1.models import (
+    FilenameReplacementCreate,
+    FilenameReplacementRead,
+)
 
 router = APIRouter()
 
 
-def rename_files_in_modules(module_names: List[str], filename_contains: str, replace_with: str):
+def rename_files_in_modules(
+    module_names: List[str], filename_contains: str, replace_with: str
+):
     cwd = Path.cwd()
     modules_dir = Path(f"{cwd}/src")  # Convert string to a Path object
 
@@ -24,9 +29,15 @@ def rename_files_in_modules(module_names: List[str], filename_contains: str, rep
                     shutil.move(item.path, module_path / new_name)
 
 
-@router.post("/filename_replacement", response_model=Union[FilenameReplacementRead, dict])
+@router.post(
+    "/filename_replacement", response_model=Union[FilenameReplacementRead, dict]
+)
 async def create_filename_replacements(replacement: FilenameReplacementCreate):
     # Execute filename replacements
-    rename_files_in_modules(replacement.module_names, replacement.filename_contains, replacement.replace_with)
+    rename_files_in_modules(
+        replacement.module_names,
+        replacement.filename_contains,
+        replacement.replace_with,
+    )
 
     return {"data": replacement, "message": "Success"}

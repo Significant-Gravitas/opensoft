@@ -4,7 +4,6 @@ import re
 
 import click
 import pyperclip
-from fastapi import requests
 
 from deprecated.utils.common import print_file_content
 from src.client import get_client
@@ -38,38 +37,46 @@ Here is my suggestion to modify the class + the code that comes with it.
 I won't modify the tests or the abstract class or add any attributes to the existing classes
 """
     result_str = (
-        db_engine + db_hint + models + implementation + fixtures + pytest_failure + instructions
+        db_engine
+        + db_hint
+        + models
+        + implementation
+        + fixtures
+        + pytest_failure
+        + instructions
     )
 
     if len(result_str) > 12000:
-        result_str = db_engine + db_hint + implementation + fixtures + pytest_failure + instructions
+        result_str = (
+            db_engine
+            + db_hint
+            + implementation
+            + fixtures
+            + pytest_failure
+            + instructions
+        )
 
     return result_str
 
 
 async def load_content_for_pass_tests(module, pick_item):
-    parts = module.rsplit('/', 1)
+    parts = module.rsplit("/", 1)
     module = parts[0]
     backend = parts[1]
     db_engine = print_file_content(f"src/engine.py")
     db_hint = "To use the db:\n with Session(engine) as session:\n    pass"
     models = print_file_content(f"src/{module}/models.py")
-    implementation = print_file_content(
-        f"src/{module}/{backend}/endpoint.py"
-    )
+    implementation = print_file_content(f"src/{module}/{backend}/endpoint.py")
     fixtures = ""
 
-    parts = module.rsplit('/', 1)
+    parts = module.rsplit("/", 1)
     module_name = parts[0]
     query_parameters = {
-        'n': 0,
-        'path': f"src/{module_name}",
+        "n": 0,
+        "path": f"src/{module_name}",
     }
     client = get_client("http://localhost:8000")
-    response = await client.get(
-        "v1/b1/pytest_failures/",
-        params=query_parameters
-    )
+    response = await client.get("v1/b1/pytest_failures/", params=query_parameters)
     first_run = response.json()
 
     pytest_failure = RunnerPytest1().get_pytest_failure(
@@ -86,11 +93,25 @@ Modify the class or the tests in order for the test to pass, depending on whethe
 Assistant:
 """
     result_str = (
-        db_engine + db_hint + db_engine + models + implementation + fixtures + pytest_failure + instructions
+        db_engine
+        + db_hint
+        + db_engine
+        + models
+        + implementation
+        + fixtures
+        + pytest_failure
+        + instructions
     )
 
     if len(result_str) > 12000:
-        result_str = db_engine + db_hint + implementation + fixtures + pytest_failure + instructions
+        result_str = (
+            db_engine
+            + db_hint
+            + implementation
+            + fixtures
+            + pytest_failure
+            + instructions
+        )
 
     return result_str
 
@@ -105,9 +126,7 @@ async def load_content_for_remove_first_test(module, pick_item):
 
 
 async def load_content_for_add_tests(module, only_gherkin=True):
-    product_requirements = print_file_content(
-        f"src/{module}/product_requirements.txt"
-    )
+    product_requirements = print_file_content(f"src/{module}/product_requirements.txt")
     user_stories = print_file_content(f"src/{module}/user_stories.txt")
     models = print_file_content(f"src/{module}/models.py")
     fixtures = print_file_content(f"src/{module}/conftest.py")
@@ -117,18 +136,13 @@ async def load_content_for_add_tests(module, only_gherkin=True):
     else:
         prefix = """Write more tests"""
 
-    instructions= f"""
+    instructions = f"""
 INSTRUCTIONS: {prefix}
 ASSISTANT:
 This gherkin scenario is not implemented yet. I will name it test_{{scenario_name_in_snake_case}} and implement the test:
 """
     result_str = (
-        product_requirements
-        + user_stories
-        + models
-        + fixtures
-        + tests
-        + instructions
+        product_requirements + user_stories + models + fixtures + tests + instructions
     )
 
     if len(result_str) > 12000:
@@ -164,12 +178,8 @@ This gherkin scenario is not implemented yet. I will name it test_{{scenario_nam
     return result_str
 
 
-
-
 async def load_content_for_remove_tests(module):
-    product_requirements = print_file_content(
-        f"src/{module}/product_requirements.txt"
-    )
+    product_requirements = print_file_content(f"src/{module}/product_requirements.txt")
     user_stories = print_file_content(f"src/{module}/user_stories.txt")
     models = print_file_content(f"src/{module}/models.py")
     fixtures = print_file_content(f"src/{module}/conftest.py")
@@ -191,9 +201,7 @@ Here are the tests you should be removing and why:
 
     if len(result_str) > 12000:
         print("Prompt Length Before:", len(result_str))
-        result_str = (
-            user_stories + models + fixtures + test_positive + instructions
-        )
+        result_str = user_stories + models + fixtures + test_positive + instructions
         if len(result_str) > 12000:
             raise Exception("Prompt too long")
 
@@ -238,17 +246,23 @@ def run(module, command, pick_item, result_only):
     loop = asyncio.get_event_loop()
 
     if command == "pass_tests_strict":
-        result_str = loop.run_until_complete(load_content_for_pass_tests_strict(module, 0))
+        result_str = loop.run_until_complete(
+            load_content_for_pass_tests_strict(module, 0)
+        )
     elif command == "pass_tests":
         result_str = loop.run_until_complete(load_content_for_pass_tests(module, 0))
     elif command == "add_tests":
         result_str = loop.run_until_complete(load_content_for_add_tests(module))
     elif command == "add_more_tests":
-        result_str = loop.run_until_complete(load_content_for_add_tests(module, only_gherkin=False))
+        result_str = loop.run_until_complete(
+            load_content_for_add_tests(module, only_gherkin=False)
+        )
     elif command == "remove_tests":
         result_str = loop.run_until_complete(load_content_for_remove_tests(module))
     elif command == "remove_first_test":
-        result_str = loop.run_until_complete(load_content_for_remove_first_test(module, 0))
+        result_str = loop.run_until_complete(
+            load_content_for_remove_first_test(module, 0)
+        )
     elif command == "compress_tests":
         result_str = loop.run_until_complete(load_content_for_compress_tests(module))
     elif command == "fix_frontend":
@@ -258,7 +272,6 @@ def run(module, command, pick_item, result_only):
 
     print("Prompt Length:", len(result_str))
     pyperclip.copy(result_str)
-
 
 
 async def take_percentage_of_string(s: str, percentage: float) -> str:

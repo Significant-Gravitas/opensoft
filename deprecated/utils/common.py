@@ -23,6 +23,7 @@ def get_latest_number_from_files(directory="EXAMPLE/implementations"):
     else:
         return None
 
+
 #
 # IMPLEMENTATION_NUMBER = get_latest_number_from_files(
 #     f"src/{MODULE}/implementations"

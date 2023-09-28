@@ -1,9 +1,9 @@
-import asyncio
 import os
 
 import pytest
-from httpx import AsyncClient
+
 from src.app import app  # Ensure this is the correct import path
+
 
 @pytest.mark.asyncio
 async def test_listing_modules(client):
@@ -12,11 +12,13 @@ async def test_listing_modules(client):
     data = response.json()
     assert isinstance(data, list)  # This should be sufficient
 
-import pytest
-from httpx import AsyncClient
-from src.app import app  # Ensure this is the correct import path
 
 import shutil
+
+import pytest
+
+from src.app import app  # Ensure this is the correct import path
+
 
 @pytest.mark.asyncio
 async def test_module_lifecycle(client):
@@ -49,7 +51,9 @@ async def test_module_lifecycle(client):
     assert response.status_code == 200  # Assuming 200 for success
     post_creation_modules = response.json()
     post_creation_count = len(post_creation_modules)
-    assert post_creation_count == initial_count + 1, f"Expected module count to increase by 1, but it increased by {post_creation_count - initial_count}"
+    assert (
+        post_creation_count == initial_count + 1
+    ), f"Expected module count to increase by 1, but it increased by {post_creation_count - initial_count}"
 
     # 4. Try to get the module after creation to ensure it's there
     response = await client.get(f"/modules/{module_name}/")

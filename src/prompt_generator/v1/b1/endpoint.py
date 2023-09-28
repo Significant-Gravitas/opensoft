@@ -5,7 +5,6 @@ from pathlib import Path
 from fastapi import FastAPI, APIRouter, HTTPException
 from typing import List, Union
 
-from src.client import get_client
 from src.common import print_file_content
 from src.prompt_generator.v1.models import PromptRead, PromptCreate
 
@@ -14,6 +13,8 @@ router = APIRouter()
 
 @router.post("/prompts", response_model=PromptRead)
 async def create_filename_replacements(body: PromptCreate):
+    from src.client import get_client
+
     if body.goal == "pass_tests":
         parts = body.module_backend.rsplit('/', 2)
         module_name = parts[0]
@@ -36,7 +37,7 @@ async def create_filename_replacements(body: PromptCreate):
         }
         client = get_client("http://localhost:8000")
         response = await client.get(
-            f"v1/b1/pytest_failures/",
+            f"v2/b1/pytest_failures/",
             params=query_parameters
         )
         pytest_failure = response.json()

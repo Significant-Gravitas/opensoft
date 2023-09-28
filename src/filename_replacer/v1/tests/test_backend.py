@@ -1,6 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
+
 # ...[other code]...
 @pytest.mark.asyncio
 async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient):
@@ -15,8 +16,8 @@ async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient
         json={
             "module_names": module_targets,
             "filename_contains": filename_search,
-            "replace_with": filename_replacement
-        }
+            "replace_with": filename_replacement,
+        },
     )
 
     # Check the response
@@ -33,6 +34,6 @@ async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient
         json={
             "module_names": module_targets,
             "filename_contains": filename_replacement,
-            "replace_with": filename_search
-        }
+            "replace_with": filename_search,
+        },
     )

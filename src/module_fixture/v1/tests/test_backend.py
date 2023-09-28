@@ -7,9 +7,11 @@ from src.module_fixture.v1.b1.endpoint import ModuleFixture1
 def module_fixture():
     return ModuleFixture1()
 
+
 @pytest.mark.mock
 def test_should_fail_one(module_fixture):
     assert False
+
 
 @pytest.mark.mock
 def test_should_fail_two(module_fixture):

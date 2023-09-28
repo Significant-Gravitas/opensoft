@@ -18,3 +18,12 @@ remove http://127.0.0.1:8000
 duplicated logic to get the backend_iterations in app.py and conftest.py
 lots of places where we parameterize the versions and backend iterations
 ability to just copy paste modules and it will just work
+
+
+from src.crud_module.v4.models import ModuleCreate, ModuleRead => to from src.crud_module.v5.models import ModuleCreate, ModuleRead
+
+
+put back v1 to v2 in prompt generator
+remove trailing slashes
+
+add remove noise method

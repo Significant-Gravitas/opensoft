@@ -1,16 +1,18 @@
 from pydantic import constr
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel
 
 
 # Define a class for creating feedback
 class ModuleBase(SQLModel):
     name: constr(min_length=1)
 
+
 class ModuleRead(ModuleBase):
     pass
+
+
 class ModuleCreate(ModuleBase):
     pass
-
 
 
 # the following acts as an contract for the routes

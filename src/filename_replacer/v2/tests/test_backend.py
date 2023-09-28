@@ -1,11 +1,9 @@
-import pytest
-from httpx import AsyncClient
-
 # ...[other code]...
 import pytest
 from httpx import AsyncClient
 
 # ...[other code]...
+
 
 @pytest.mark.asyncio
 async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient):
@@ -20,8 +18,8 @@ async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient
         json={
             "module_names": module_targets,
             "filename_contains": filename_search,
-            "replace_with": filename_replacement
-        }
+            "replace_with": filename_replacement,
+        },
     )
 
     # Check the response
@@ -35,11 +33,15 @@ async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient
 
     # Assert for files_replaced_before and files_replaced_after
     assert "files_replaced_before" in response_data
-    assert all(filename_search in file for file in response_data["files_replaced_before"])
+    assert all(
+        filename_search in file for file in response_data["files_replaced_before"]
+    )
 
     # Ensure every file in files_replaced_after contains the replacement substring
     assert "files_replaced_after" in response_data
-    assert all(filename_replacement in file for file in response_data["files_replaced_after"])
+    assert all(
+        filename_replacement in file for file in response_data["files_replaced_after"]
+    )
 
     # reverse the operation
     response = await client.post(
@@ -47,6 +49,6 @@ async def test_can_replace_filenames_given_a_list_of_modules(client: AsyncClient
         json={
             "module_names": module_targets,
             "filename_contains": filename_replacement,
-            "replace_with": filename_search
-        }
+            "replace_with": filename_search,
+        },
     )

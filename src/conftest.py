@@ -1,13 +1,12 @@
 import asyncio
 from pathlib import Path
 
+import pydevd_pycharm
 import pytest
-from httpx import AsyncClient
 from sqlalchemy import MetaData
 from sqlmodel import Session, SQLModel
 
 from src import engine
-from src.app import app
 from src.client import get_client
 
 
@@ -20,15 +19,26 @@ def pytest_addoption(parser):
     parser.addoption(
         "--mock", action="store_true", default=False, help="Run mock tests"
     )
+    parser.addoption(
+        "--pdebug",
+        action="store_true",
+        default=False,
+        help="run tests with PyCharm debugger attached",
+    )
 
 
 import re
 
+
 def get_backend_iterations(script_location: Path):
-    pattern = re.compile(r'^b\d+$')
+    pattern = re.compile(r"^b\d+$")
     all_folders = [entry.name for entry in script_location.iterdir() if entry.is_dir()]
     backend_iterations = [folder for folder in all_folders if pattern.match(folder)]
-    return [f"http://127.0.0.1:8000/{script_location.name}/{folder}" for folder in backend_iterations]
+    return [
+        f"http://127.0.0.1:8000/{script_location.name}/{folder}"
+        for folder in backend_iterations
+    ]
+
 
 def pytest_generate_tests(metafunc):
     if "client" in metafunc.fixturenames:
@@ -65,7 +75,7 @@ def pytest_runtest_setup(item):
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_db_session():
-    from src.user_feedback.v1 import models
+    pass
 
     SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
@@ -88,3 +98,10 @@ def clear_database():
             session.execute(table.delete())
 
         session.commit()
+
+
+def pytest_configure(config):
+    if config.getoption("--pdebug"):
+        pydevd_pycharm.settrace(
+            "localhost", port=9739, stdoutToServer=True, stderrToServer=True
+        )

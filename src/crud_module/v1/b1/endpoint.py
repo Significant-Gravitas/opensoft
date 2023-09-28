@@ -1,21 +1,27 @@
 import os
 import shutil
 from pathlib import Path
-
-from fastapi import FastAPI, APIRouter, HTTPException
 from typing import List
+
+from fastapi import APIRouter, HTTPException
+
 from src.crud_module.v1.models import ModuleCreate, ModuleRead
 
 router = APIRouter()
 
+
 def get_all_modules():
     cwd = Path.cwd()
     modules_dir = f"{cwd}/src"
-    return [ModuleRead(name=item.name) for item in os.scandir(modules_dir) if item.is_dir()]
+    return [
+        ModuleRead(name=item.name) for item in os.scandir(modules_dir) if item.is_dir()
+    ]
+
 
 @router.get("/modules/")
 def get_modules() -> List[ModuleRead]:
     return get_all_modules()
+
 
 @router.get("/modules/{module_name}/")
 def get_module_by_name(module_name: str) -> ModuleRead:
@@ -32,9 +38,10 @@ def create_module(module: ModuleCreate) -> dict:
     if not os.path.exists(folder):
         os.makedirs(folder)
         path = os.path.join(folder, "__init__.py")
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             f.write("")
     return ModuleRead(name=module.name)
+
 
 @router.delete("/modules/{module_name}/")
 def delete_module_by_name(module_name: str):

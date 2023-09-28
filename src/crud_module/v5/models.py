@@ -1,5 +1,5 @@
-from pydantic import constr, validator
-from sqlmodel import SQLModel, Field
+from pydantic import constr
+from sqlmodel import SQLModel
 
 
 # Define a class for creating feedback
@@ -8,27 +8,22 @@ def snake_case_validator(name: str) -> str:
         raise ValueError("Module name is not in snake case")
     return name
 
+
 class ModuleBase(SQLModel):
     # The regex here checks for names that end with _v followed by one or more digits
     name: constr(min_length=1)
 
-    # name: constr(regex=r'.*_v\d+$', min_length=1) = ...
-    #
-    # @validator("name", pre=True, always=True)
-    # def validate_snake_case(cls, name):
-    #     return snake_case_validator(name)
 
 class ModuleRead(ModuleBase):
-    pass
+    version: constr(regex=r"^v\d+$", min_length=2)
+
 
 class ModuleCreate(ModuleBase):
     pass
 
-class ModuleRead(ModuleBase):
-    pass
+
 class ModuleCreate(ModuleBase):
     pass
-
 
 
 # the following acts as an contract for the routes

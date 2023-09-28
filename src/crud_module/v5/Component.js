@@ -22,7 +22,7 @@ function Component() {
             <ul>
                 {modules.map(module => (
                     <li key={module.name}>
-                        <Link to={`/${module.name}`}>{`${module.name}/${module.version}`}</Link>
+                        <Link to={`/${module.name}/${module.version}`}>{`${module.name}/${module.version}`}</Link>
                     </li>
                 ))}
             </ul>

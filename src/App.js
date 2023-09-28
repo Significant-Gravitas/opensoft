@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import Component from "./crud_module/v5/Component";
-import { useParams } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
+import CrudModule from "./crud_module/v5/Component";
+import PromptGenerator from "./prompt_generator/v3/Component";
 
 function toCamelCase(str) {
     return str
@@ -10,14 +10,14 @@ function toCamelCase(str) {
         .join('');
 }
 
-
 function ModuleDetail() {
-    const { moduleName } = useParams();
+    const { moduleName, version } = useParams();
 
-    // Convert moduleName to CamelCase for the component's name
-    const componentName = toCamelCase(moduleName);
-    // Form the dynamic path
-    const componentPath = `./${moduleName}/v1/Component`;
+    if (!moduleName || !version) {
+        return <div>Invalid module or version</div>;
+    }
+
+    const componentPath = `./${moduleName}/${version}/Component`;
 
     const DynamicComponent = React.lazy(() => import(`${componentPath}`));
 
@@ -28,27 +28,33 @@ function ModuleDetail() {
     );
 }
 
-
 function App() {
     return (
         <Router>
             <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
                 <h1>Iterface</h1>
-                <div style={{ display: "flex", flexGrow: 1, flexWrap: 'nowrap' }}> {/* Added flexWrap */}
-                    <div style={{ flex: '0 0 30%', overflowY: "auto" }}> {/* Modified this line */}
-                        <Component />
+                <div style={{ display: "flex", flexGrow: 1, flexWrap: 'nowrap', position: 'relative' }}>
+                    {/* CrudModule on the left */}
+                    <div style={{ flex: '0 0 30%', overflowY: "auto" }}>
+                        <CrudModule />
                     </div>
-                    <div style={{ flex: '0 0 70%', overflowY: "auto", borderLeft: "1px solid #ddd" }}> {/* Modified this line */}
+
+                    {/* Component in the center right */}
+                    <div style={{ flex: '0 0 70%', overflowY: "auto", borderLeft: "1px solid #ddd" }}>
                         <Routes>
-                            <Route path="/:moduleName" element={<ModuleDetail />} />
+                            <Route path="/:moduleName/:version" element={<ModuleDetail />} />
+                            <Route path="*" element={<div>Not Found</div>} />
                         </Routes>
+                    </div>
+
+                    {/* PromptCreation on the top right */}
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', width: '25%', maxWidth: '400px'}}>
+                        <PromptGenerator />
                     </div>
                 </div>
             </div>
         </Router>
     );
 }
-
-
 
 export default App;

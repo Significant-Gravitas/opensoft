@@ -66,6 +66,10 @@ const Component: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    // Clear previous message and prompt response
+    setMessage(null);
+    setPromptResponse(null);
+
     if (!moduleBackend) return;
 
     const response = await fetch('http://127.0.0.1:8000/v1/b1/prompts', {
@@ -83,7 +87,6 @@ const Component: React.FC = () => {
       const data = await response.json();
       setMessage('Prompt created successfully!');
       setPromptResponse(data.prompt);
-      setModuleBackend(null);
     } else {
       const data = await response.json();
       setMessage(data.detail || 'Error occurred while creating prompt');

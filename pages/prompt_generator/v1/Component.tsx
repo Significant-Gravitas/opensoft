@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
+import TextInput from '../../TextInput'; // Update the path as needed
 
 type Module = {
   name: string;
@@ -6,21 +7,22 @@ type Module = {
   backend: string;
 };
 
-
-type ComponentProps = {
-  modules?: Module[];  // Made this optional
-};
-
 const Component: React.FC = () => {
-  const [moduleBackend, setModuleBackend] = useState('');
-  const [, setGoal] = useState('');
-  const [, setMessage] = useState('');
-  const [, setPromptResponse] = useState('');
-  const [selectedModule, setSelectedModule] = useState('');
+  const [moduleBackend, setModuleBackend] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [promptResponse, setPromptResponse] = useState<string | null>(null);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [loadingModules, setLoadingModules] = useState(false);
   const [modulesState, setModulesState] = useState<Module[]>([]);
 
-  // Fetch modules on mount
+  useEffect(() => {
+    if (selectedModule) {
+      setModuleBackend(
+        `${selectedModule.name}/${selectedModule.version}/${selectedModule.backend}`,
+      );
+    }
+  }, [selectedModule]);
+
   useEffect(() => {
     const fetchModules = async () => {
       setLoadingModules(true);
@@ -29,9 +31,6 @@ const Component: React.FC = () => {
         if (response.ok) {
           const fetchedModules: Module[] = await response.json();
           setModulesState(fetchedModules);
-          if (fetchedModules.length) {
-            setSelectedModule(fetchedModules[0].name);
-          }
         } else {
           setMessage('Error fetching modules.');
         }
@@ -47,23 +46,36 @@ const Component: React.FC = () => {
 
   useEffect(() => {
     if (modulesState.length) {
-      setSelectedModule(modulesState[0].name);
+      setSelectedModule(modulesState[0]);
     }
   }, [modulesState]);
 
-
+  const handleSelectModule = (moduleIdentifier: string) => {
+    const [name, version, backend] = moduleIdentifier.split('-');
+    const foundModule = modulesState.find(
+      (module) =>
+        module.name === name &&
+        module.version === version &&
+        module.backend === backend,
+    );
+    if (foundModule) {
+      setSelectedModule(foundModule);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch('http://127.0.0.1:8000/v3/b1/prompts', {
+    if (!moduleBackend) return;
+
+    const response = await fetch('http://127.0.0.1:8000/v1/b1/prompts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         module_backend: moduleBackend,
-        goal: 'pass_tests', // Set the goal value to "pass_tests" directly.
+        goal: 'pass_tests',
       }),
     });
 
@@ -71,56 +83,18 @@ const Component: React.FC = () => {
       const data = await response.json();
       setMessage('Prompt created successfully!');
       setPromptResponse(data.prompt);
-
-      // Clear the input states after a successful submission
-      setModuleBackend('');
-      setGoal('');
+      setModuleBackend(null);
     } else {
       const data = await response.json();
       setMessage(data.detail || 'Error occurred while creating prompt');
     }
   };
 
-  const componentRef = useRef(null);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as Element; // <-- Cast the target to Element
-
-      if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
-        if (
-          target.tagName === 'INPUT' || // <-- Use the new target variable
-          target.tagName === 'TEXTAREA' // <-- Use the new target variable
-        ) {
-          return;
-        }
-
-        event.preventDefault();
-
-        const selection = window.getSelection();
-        if (selection && componentRef.current) {
-          // <-- Check if componentRef.current is non-null
-          const range = document.createRange();
-          range.selectNodeContents(componentRef.current);
-          // eslint-disable-next-line prettier/prettier
-        selection.removeAllRanges();
-          selection.addRange(range);
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [componentRef.current]);
-
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <form
         onSubmit={handleSubmit}
-        style={{ width: '300px', textAlign: 'center' }}
+        style={{ width: '300px', textAlign: 'center', flexShrink: 0 }} // Prevent form from shrinking
       >
         <label>
           Module Backend:
@@ -128,12 +102,19 @@ const Component: React.FC = () => {
             <div>Loading...</div>
           ) : (
             <select
-              value={selectedModule}
-              onChange={(e) => setSelectedModule(e.target.value)}
+              value={
+                selectedModule
+                  ? `${selectedModule.name}-${selectedModule.version}-${selectedModule.backend}`
+                  : ''
+              }
+              onChange={(e) => handleSelectModule(e.target.value)}
               style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}
             >
               {modulesState.map((module) => (
-                <option key={module.name} value={`${module.name}/${module.version}/${module.backend}`}>
+                <option
+                  key={`${module.name}-${module.version}-${module.backend}`}
+                  value={`${module.name}-${module.version}-${module.backend}`}
+                >
                   {`${module.name}/${module.version}/${module.backend}`}
                 </option>
               ))}
@@ -142,6 +123,14 @@ const Component: React.FC = () => {
         </label>
         <button type="submit">pass_tests</button>
       </form>
+      {message && <div style={{ flexShrink: 0 }}>{message}</div>}
+      {promptResponse && (
+        <div style={{ flex: 1, overflow: 'auto' }}>
+          {' '}
+          {/* Make this div grow and fill space */}
+          <TextInput value={promptResponse} />
+        </div>
+      )}
     </div>
   );
 };

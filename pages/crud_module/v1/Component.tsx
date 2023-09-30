@@ -13,11 +13,22 @@ function ModuleList({ onModuleChange }: { onModuleChange: (name: string, version
   const [modules, setModules] = useState<Module[]>([]);
 
   useEffect(() => {
-    // Fetch all the modules from the backend when component mounts
     fetch('http://127.0.0.1:8000/v1/b1/modules/')
       .then((response) => response.json())
       .then((data) => {
-        setModules(data);
+        // Deduplication logic
+        const uniqueModulesMap: { [key: string]: Module } = {};
+        const deduplicatedModules: Module[] = [];
+
+        for (const module of data) {
+          const key = `${module.name}/${module.version}`;
+          if (!uniqueModulesMap[key]) {
+            uniqueModulesMap[key] = module;
+            deduplicatedModules.push(module);
+          }
+        }
+
+        setModules(deduplicatedModules);
       })
       .catch((error) => {
         console.error('There was an error fetching the modules', error);
@@ -33,7 +44,7 @@ function ModuleList({ onModuleChange }: { onModuleChange: (name: string, version
             <Link
               href={{
                 pathname: '/',
-                query: { name: module.name, version: module.version, backend: module.backend }
+                query: { name: module.name, version: module.version }
               }}
             >
               <span
@@ -43,7 +54,7 @@ function ModuleList({ onModuleChange }: { onModuleChange: (name: string, version
                 }}
                 style={{ cursor: 'pointer' }}
               >
-                {`${module.name}/${module.version}/${module.backend}`}
+                {`${module.name}/${module.version}`}
               </span>
             </Link>
           </li>

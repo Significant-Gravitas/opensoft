@@ -25,7 +25,7 @@ const Component: React.FC = () => {
     const fetchModules = async () => {
       setLoadingModules(true);
       try {
-        const response = await fetch('http://127.0.0.1:8000/v6/b1/modules/');
+        const response = await fetch('http://127.0.0.1:8000/v1/b1/modules/');
         if (response.ok) {
           const fetchedModules: Module[] = await response.json();
           setModulesState(fetchedModules);

@@ -1,18 +1,4 @@
 import os
-
-import pytest
-
-from pages.app import app  # Ensure this is the correct import path
-
-
-@pytest.mark.asyncio
-async def test_listing_modules(client):
-    response = await client.get("/modules/")
-    assert response.status_code == 200
-    data = response.json()
-    assert isinstance(data, list)  # This should be sufficient
-
-
 import shutil
 
 import pytest
@@ -45,6 +31,7 @@ async def test_module_lifecycle(client):
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == module_name
+    assert data["version"].startswith("v")  # Ensure that version starts with 'v'
 
     # 3. List modules after creating
     response = await client.get("/modules/")
@@ -68,3 +55,18 @@ async def test_module_lifecycle(client):
     # 6. Ensure it was deleted by trying to get it again
     response = await client.get(f"/modules/{module_name}/")
     assert response.status_code == 404  # Assuming 404 for not found
+
+
+@pytest.mark.asyncio
+async def test_default_module_listing_order(client):
+    # Step: Ask for the list of modules without specifying a sort order
+    response = await client.get("/modules/")
+    assert response.status_code == 200  # 200 for success
+
+    # Step: Verify that the list is sorted in ascending order by name, version, and backend
+    modules_list = response.json()
+    actual_order = [(module["name"], module["version"], module["backend"]) for module in modules_list]
+
+    assert actual_order == sorted(
+        actual_order, key=lambda x: (x[0].lower(), x[1], x[2])
+    ), f"Expected the list to be sorted, but got {actual_order}"

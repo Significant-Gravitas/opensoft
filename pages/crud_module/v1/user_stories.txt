@@ -1,12 +1,40 @@
 Feature: Module API
 
-  Scenario: Listing Modules
-    Given some modules are present
+  Background:
+    Given the system is initialized
+    And the test module does not pre-exist
+
+  Scenario: Test Module Lifecycle
+    # Check for non-existence of module initially
+    When the user asks for the module named "test_module"
+    Then the system should return a "404" status code
+
+    # Creation of module
+    When the user submits a request to create a module named "test_module" with valid details
+    Then the system should return a "200" status code
+    And the module named "test_module" should be created
+
+    # Verify module is listed after creation
     When the user asks the list of modules
     Then the system should return the list of modules
+    And the list should contain the module named "test_module"
 
-  Scenario: Creating a Module
-    Given the system allows module creation
-    When the user submits a request to create a module with valid details
-    Then the system should create a new module
-    And the user should receive a confirmation of the module creation.
+    # Verify module details after creation
+    When the user asks for the module named "test_module"
+    Then the system should return a "200" status code
+    And the module named "test_module" should be returned
+
+    # Deletion of module
+    When the user submits a request to delete the module named "test_module"
+    Then the system should return a "200" status code
+    And the module named "test_module" should be deleted
+
+    # Check for non-existence of module after deletion
+    When the user asks for the module named "test_module"
+    Then the system should return a "404" status code
+
+  Scenario: Default Alphabetical Sorting of Modules
+    # Asking for the list of modules
+    When the user asks the list of modules without specifying a sort order
+    Then the system should return the list of modules in alphabetical order
+    And the list should be in the order: ["apple_module", "banana_module", "cherry_module"]

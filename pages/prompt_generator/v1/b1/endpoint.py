@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 from pages.common import print_file_content

@@ -1,8 +1,8 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import ModuleList from './crud_module/v6/Component';
-import PromptGenerator from './prompt_generator/v3/Component';
+import ModuleList from './crud_module/v1/Component';
+import PromptGenerator from './prompt_generator/v1/Component';
 
 function toCamelCase(str: string): string {
   return str

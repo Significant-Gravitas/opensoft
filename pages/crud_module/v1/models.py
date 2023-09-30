@@ -3,13 +3,20 @@ from sqlmodel import SQLModel
 
 
 # Define a class for creating feedback
+def snake_case_validator(name: str) -> str:
+    if name != "_".join(word.lower() for word in name.split("_")):
+        raise ValueError("Module name is not in snake case")
+    return name
+
+
 class ModuleBase(SQLModel):
+    # The regex here checks for names that end with _v followed by one or more digits
     name: constr(min_length=1)
 
 
 class ModuleRead(ModuleBase):
-    pass
-
+    version: constr(regex=r"^v\d+$", min_length=2)
+    backend: constr(regex=r"^b\d+$", min_length=2)
 
 class ModuleCreate(ModuleBase):
     pass

@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 
 // pages/ModuleList.js
 
-import { Link } from "react-router-dom";
 
 function Component() {
     const [modules, setModules] = useState([]);

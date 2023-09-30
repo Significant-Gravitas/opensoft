@@ -1,6 +1,6 @@
 from typing import Dict
 
-from src.battleship.models import (
+from pages.battleship.models import (
     AbstractBattleship,
     Game,
     GameStatus,

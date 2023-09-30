@@ -2,8 +2,8 @@ from typing import List, Optional
 
 from sqlmodel import Session
 
-from src import engine
-from src.battleship_v2.models import (
+from pages import engine
+from pages.battleship_v2.models import (
     AbstractBattleshipV2,
     Direction,
     Game,

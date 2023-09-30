@@ -1,6 +1,6 @@
 from enum import Enum
 
-from src.battleship.models import (
+from pages.battleship.models import (
     AbstractBattleship,
     Game,
     GameStatus,

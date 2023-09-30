@@ -5,7 +5,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 
-from src.base_class import BaseClass
+from pages.base_class import BaseClass
 
 
 class Direction(str, Enum):

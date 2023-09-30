@@ -4,7 +4,7 @@ import os
 import pkgutil
 from typing import Dict, List, Tuple
 
-from src.configurator_pytest.models import AbstractConfiguratorPytest
+from pages.configurator_pytest.models import AbstractConfiguratorPytest
 
 
 class ConfiguratorPytest1(AbstractConfiguratorPytest):

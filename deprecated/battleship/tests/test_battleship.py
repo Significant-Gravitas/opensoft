@@ -1,4 +1,4 @@
-from src.battleship.models import ShipPlacement, Turn
+from pages.battleship.models import ShipPlacement, Turn
 
 
 def test_turns_and_results(battleship, initialized_game_id):

@@ -2,8 +2,8 @@ from abc import abstractmethod
 
 from sqlmodel import Session
 
-from src import engine
-from src.user_feedback_v1.models import (
+from pages import engine
+from pages.user_feedback_v1.models import (
     AbstractUserFeedbackV1,
     Feedback,
     FeedbackCreate,

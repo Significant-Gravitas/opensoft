@@ -39,25 +39,6 @@ const Component: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (modulesState.length) {
-      setSelectedModule(modulesState[0]);
-    }
-  }, [modulesState]);
-
-  const handleSelectModule = (moduleIdentifier: string) => {
-    const [name, version, backend] = moduleIdentifier.split('-');
-    const foundModule = modulesState.find(
-      (module) =>
-        module.name === name &&
-        module.version === version &&
-        module.backend === backend,
-    );
-    if (foundModule) {
-      setSelectedModule(foundModule);
-    }
-  };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -90,8 +71,6 @@ const Component: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* ... (rest of your render logic) */}
-      {/* You can remove the dropdown selection as the module is now sourced from the URL */}
       <form
         onSubmit={handleSubmit}
         style={{ width: '300px', textAlign: 'center', flexShrink: 0 }}
@@ -104,7 +83,12 @@ const Component: React.FC = () => {
         </p>
         <button type="submit">pass_tests</button>
       </form>
-      {/* ... (rest of your render logic) */}
+      {message && <div style={{ flexShrink: 0 }}>{message}</div>}
+      {promptResponse && (
+        <div style={{ flex: 1, overflow: 'auto' }}>
+          <TextInput value={promptResponse} />
+        </div>
+      )}
     </div>
   );
 };

@@ -88,7 +88,7 @@ const Component: React.FC = () => {
     }
   }, []);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (goal: 'pass_tests' | 'pass_frontend_tests', e: FormEvent) => {
     e.preventDefault();
 
     // Clear previous message and prompt response
@@ -97,14 +97,14 @@ const Component: React.FC = () => {
 
     if (!moduleBackend) return;
 
-    const response = await fetch('http://127.0.0.1:8000/v2/b1/prompts', {
+    const response = await fetch('http://127.0.0.1:8000/v3/b1/prompts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         module_backend: moduleBackend,
-        goal: 'pass_tests',
+        goal: goal,
       }),
     });
 
@@ -120,16 +120,14 @@ const Component: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <form
-        onSubmit={handleSubmit}
-        style={{ width: '300px', textAlign: 'center', flexShrink: 0 }}
-      >
+      <form style={{ width: '300px', textAlign: 'center', flexShrink: 0 }}>
         <p>
           {selectedModule
             ? `${selectedModule.name}/${selectedModule.version}/${selectedModule.backend}`
             : 'Loading...'}
         </p>
-        <button type="submit">pass_tests</button>
+        <button onClick={(e) => handleSubmit('pass_tests', e)}>pass_tests</button>
+        <button onClick={(e) => handleSubmit('pass_frontend_tests', e)}>pass_frontend_tests</button>
       </form>
       {message && <div style={{ flexShrink: 0 }}>{message}</div>}
       {promptResponse && (

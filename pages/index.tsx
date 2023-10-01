@@ -2,7 +2,7 @@ import React, { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import ModuleList from './crud_module/v3/Component';
-import PromptGenerator from './prompt_generator/v2/Component';
+import PromptGenerator from './prompt_generator/v3/Component';
 import BackendSelector from './BackendSelector';
 
 function toCamelCase(str: string): string {

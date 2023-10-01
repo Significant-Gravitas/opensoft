@@ -1,8 +1,9 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import ModuleList from './crud_module/v1/Component';
-import PromptGenerator from './prompt_generator/v1/Component';
+import ModuleList from './crud_module/v3/Component';
+import PromptGenerator from './prompt_generator/v2/Component';
+import BackendSelector from './BackendSelector';
 
 function toCamelCase(str: string): string {
   return str
@@ -15,14 +16,12 @@ interface ModuleDetailProps {
   moduleDetail: {
     name: string | null;
     version: string | null;
+    backend: string;
   };
 }
 
-interface ModuleListProps {
-  onModuleChange: (moduleName: string, version: string) => void;
-}
+
 function ModuleDetail({ moduleDetail }: ModuleDetailProps) {
-  const router = useRouter();
   const { name: moduleName, version } = moduleDetail;
 
   if (!moduleName || !version) {
@@ -32,7 +31,9 @@ function ModuleDetail({ moduleDetail }: ModuleDetailProps) {
   const DynamicComponent = dynamic(
     () =>
       import(
-        `./${moduleName || 'defaultModule'}/${version || 'defaultVersion'}/Component`
+        `./${moduleName || 'defaultModule'}/${
+          version || 'defaultVersion'
+        }/Component`
       ),
   ); // add a default module and version if required
 
@@ -44,32 +45,22 @@ function ModuleDetail({ moduleDetail }: ModuleDetailProps) {
 }
 
 function App() {
+  const [selectedBackend, setSelectedBackend] = useState<string>('b1');
+
+  const handleBackendSelect = (backend: string) => {
+    setSelectedBackend(backend);
+    // Update URL or other necessary places with the backend information
+    // For instance, you can add it to router.query as done for module name and version
+  };
+
   const router = useRouter();
-  const { name, version } = router.query;
+  const { name, version, backend } = router.query;
 
   useEffect(() => {
     if (name && version) {
       setCurrentModule({ name, version });
     }
-  }, [name, version]);
-
-  const handleModuleChange = (
-    moduleName: string,
-    version: string,
-    backend: string,
-  ) => {
-    setCurrentModule({ name: moduleName, version });
-
-    // Use shallow routing to change the URL without running data fetching methods again
-    router.push(
-      {
-        pathname: '/',
-        query: { name: moduleName, version, backend },
-      },
-      undefined,
-      { shallow: true },
-    );
-  };
+  }, [name, version, backend]); // Added backend to the dependencies
 
   const [currentModule, setCurrentModule] = useState<{
     name: string | null;
@@ -91,18 +82,26 @@ function App() {
         }}
       >
         <div style={{ flex: '0 0 30%', overflowY: 'auto' }}>
-          <ModuleList onModuleChange={handleModuleChange} />
+          <ModuleList />
         </div>
         <div
           style={{
             flex: '0 0 70%',
             overflowY: 'auto',
             borderLeft: '1px solid #ddd',
+            padding: '10px',
           }}
         >
-          <ModuleDetail moduleDetail={currentModule} />
+          {currentModule.name && (
+            <BackendSelector
+              moduleName={currentModule.name}
+              onBackendSelect={handleBackendSelect}
+            />
+          )}
+          <ModuleDetail
+            moduleDetail={{ ...currentModule, backend: selectedBackend }}
+          />
         </div>
-
         <div
           style={{
             position: 'absolute',

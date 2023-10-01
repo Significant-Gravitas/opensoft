@@ -12,7 +12,6 @@ const Component: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [promptResponse, setPromptResponse] = useState<string | null>(null);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
-  const [loadingModules, setLoadingModules] = useState(false);
   const [modulesState, setModulesState] = useState<Module[]>([]);
 
   useEffect(() => {
@@ -24,24 +23,20 @@ const Component: React.FC = () => {
   }, [selectedModule]);
 
   useEffect(() => {
-    const fetchModules = async () => {
-      setLoadingModules(true);
-      try {
-        const response = await fetch('http://127.0.0.1:8000/v3/b1/modules/');
-        if (response.ok) {
-          const fetchedModules: Module[] = await response.json();
-          setModulesState(fetchedModules);
-        } else {
-          setMessage('Error fetching modules.');
-        }
-      } catch (error) {
-        setMessage('Error fetching modules.');
-      } finally {
-        setLoadingModules(false);
-      }
-    };
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name') || '';
+    const version = params.get('version') || '';
+    const backend = params.get('backend') || '';
 
-    fetchModules();
+    if (name && version && backend) {
+      setSelectedModule({
+        name,
+        version,
+        backend,
+      });
+    } else {
+      setMessage('Invalid module details in URL.');
+    }
   }, []);
 
   useEffect(() => {
@@ -72,7 +67,7 @@ const Component: React.FC = () => {
 
     if (!moduleBackend) return;
 
-    const response = await fetch('http://127.0.0.1:8000/v1/b1/prompts', {
+    const response = await fetch('http://127.0.0.1:8000/v2/b1/prompts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -95,45 +90,21 @@ const Component: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* ... (rest of your render logic) */}
+      {/* You can remove the dropdown selection as the module is now sourced from the URL */}
       <form
         onSubmit={handleSubmit}
-        style={{ width: '300px', textAlign: 'center', flexShrink: 0 }} // Prevent form from shrinking
+        style={{ width: '300px', textAlign: 'center', flexShrink: 0 }}
       >
-        <label>
+        <p>
           Module Backend:
-          {loadingModules ? (
-            <div>Loading...</div>
-          ) : (
-            <select
-              value={
-                selectedModule
-                  ? `${selectedModule.name}-${selectedModule.version}-${selectedModule.backend}`
-                  : ''
-              }
-              onChange={(e) => handleSelectModule(e.target.value)}
-              style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}
-            >
-              {modulesState.map((module) => (
-                <option
-                  key={`${module.name}-${module.version}-${module.backend}`}
-                  value={`${module.name}-${module.version}-${module.backend}`}
-                >
-                  {`${module.name}/${module.version}/${module.backend}`}
-                </option>
-              ))}
-            </select>
-          )}
-        </label>
+          {selectedModule
+            ? `${selectedModule.name}/${selectedModule.version}/${selectedModule.backend}`
+            : 'Loading...'}
+        </p>
         <button type="submit">pass_tests</button>
       </form>
-      {message && <div style={{ flexShrink: 0 }}>{message}</div>}
-      {promptResponse && (
-        <div style={{ flex: 1, overflow: 'auto' }}>
-          {' '}
-          {/* Make this div grow and fill space */}
-          <TextInput value={promptResponse} />
-        </div>
-      )}
+      {/* ... (rest of your render logic) */}
     </div>
   );
 };

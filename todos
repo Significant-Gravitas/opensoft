@@ -30,3 +30,12 @@ add remove noise method
 add tests to react components
 
 remove javascript components
+add ability to put prompt in bottom of page
+
+
+
+thread
+  wants to build backends fast
+    wants to create blank backends
+    trying to prompt through text completer and can't do it because it removes new lines.
+

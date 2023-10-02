@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import TextInput from '../../TextInput';
-import {useRouter} from "next/router"; // Update the path as needed
+import { useRouter } from 'next/router'; // Update the path as needed
 
 type Module = {
   name: string;
@@ -30,7 +30,6 @@ const Component: React.FC = () => {
       setSelectedModule(null); // Clear the previously selected module
     }
   }, [router.query]); // React to changes in the query object
-
 
   useEffect(() => {
     const updateSelectedModuleFromURL = () => {

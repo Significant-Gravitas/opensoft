@@ -37,4 +37,3 @@ if first_failed_test:
                     f"Test Title: {first_failed_test['Test Title']}\n" \
                     f"Failure Reason: {first_failed_test['Failure Reason']}"
     print(result_string)
-

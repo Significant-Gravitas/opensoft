@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
+import ChatGPTText from '../../TextOutput'; // Assuming it's in the same directory. Adjust the import path if needed.
 
 function Component() {
+  const [inputText, setInputText] = useState<string>('');
   const [completionText, setCompletionText] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+
+  const handleKeyPress = async (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      createTextCompletion();
+    }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputText(event.target.value);
+  };
 
   const createTextCompletion = async () => {
     try {
@@ -13,7 +26,7 @@ function Component() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            input: "What's the capital of America?",
+            input: inputText,
           }),
         },
       );
@@ -31,13 +44,17 @@ function Component() {
 
   return (
     <div>
-      <button>Create Text Completion</button>
+      <button onClick={createTextCompletion}>Create Text Completion</button>
       <input
         type="text"
         aria-label="chat input"
         placeholder="Type your message here..."
+        onKeyPress={handleKeyPress}
+        onChange={handleChange}
+        value={inputText}
       />
-      {/* Any other UI elements */}
+      <ChatGPTText text={completionText} />{' '}
+      {/* This line is the change where we use ChatGPTText */}
     </div>
   );
 }

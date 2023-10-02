@@ -15,14 +15,14 @@
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --noEmit",
-    "lint": "eslint --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
-    "format": "prettier --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
+    "lint": "eslint --ignore-path .gitignore \"pages/**/*.+(ts|js|tsx)\"",
+    "format": "prettier --ignore-path .gitignore \"pages/**/*.+(ts|js|tsx)\" --write",
     "postinstall": "husky install",
     "test": "jest --watch",
     "test:ci": "jest --ci"
   },
   "lint-staged": {
-    "./src/**/*.{ts,js,jsx,tsx}": [
+    "./pages/**/*.{ts,js,jsx,tsx}": [
       "eslint --ignore-path .gitignore --fix",
       "prettier --ignore-path .gitignore --write"
     ]

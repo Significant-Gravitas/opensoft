@@ -6,6 +6,10 @@ from pages.prompt_generator.v3.models import PromptCreate, PromptRead
 router = APIRouter()
 
 
+import json
+import re
+
+
 @router.post("/prompts", response_model=PromptRead)
 async def create_prompts(body: PromptCreate):
     from pages.client import get_client
@@ -70,16 +74,31 @@ async def create_prompts(body: PromptCreate):
     elif body.goal == "pass_frontend_tests":
       instructions = "Please make the tests pass by changing the tests or changing the component"
       component = print_file_content(
-          f"pages/{module_name}/{module_version}/component.test.tsx"
+          f"pages/{module_name}/{module_version}/component.tsx"
       )
       component_test = print_file_content(
           f"pages/{module_name}/{module_version}/component.test.tsx"
       )
+      with open('.jest.report.json', 'r', encoding='utf-8') as f:
+        import subprocess
+
+        # The command to be executed
+        cmd = ['jest', 'pages/text_completer/v1', '--json', '--outputFile=.jest.report.json']
+
+        # Run the command and discard the stdout
+        with open("/dev/null", "w") as fnull:
+            subprocess.call(cmd, stdout=fnull, stderr=subprocess.STDOUT)
+
+        content = strip_ansi_escape_sequences(f.read())
+        with open(".jest.report.json", 'w', encoding='utf-8') as file:
+          file.write(content)
+        first_failed = get_first_failed_test(json.loads(content))
       result_str = (
         models
         + test
         + component
         + component_test
+        + first_failed
         + instructions
       )
     from fastapi import HTTPException
@@ -91,3 +110,27 @@ async def create_prompts(body: PromptCreate):
     return PromptRead(
         module_backend=body.module_backend, goal=body.goal, prompt=result_str
     )
+
+def strip_ansi_escape_sequences(s):
+    return re.sub(r'\\u001b\[[0-9;]*[a-zA-Z]', '', s)
+
+def get_first_failed_test(data):
+    test_results = data.get("testResults", [])
+
+    for test_result in test_results:
+        if test_result.get("status") == "failed":
+            for assertion in test_result.get("assertionResults", []):
+                if assertion.get("status") == "failed":
+                    failure_details = assertion.get("failureDetails", [])
+                    if failure_details:
+                        message = failure_details[0].get("matcherResult", {}).get("message")
+                        if message:
+                            return message
+
+                    # Fallback to access the assertion["failureMessages"][0] if the value is None
+                    failure_messages = assertion.get("failureMessages", [])
+                    if failure_messages:
+                        return failure_messages[0]
+            if test_result:
+              return test_result["message"]
+    return ""

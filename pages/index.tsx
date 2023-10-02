@@ -20,7 +20,6 @@ interface ModuleDetailProps {
   };
 }
 
-
 function ModuleDetail({ moduleDetail }: ModuleDetailProps) {
   const { name: moduleName, version } = moduleDetail;
 

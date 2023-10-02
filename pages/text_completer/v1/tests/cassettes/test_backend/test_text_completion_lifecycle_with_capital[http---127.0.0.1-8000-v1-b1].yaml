@@ -1,0 +1,166 @@
+interactions:
+- request:
+    body: '{"model": "gpt-4", "messages": [{"role": "system", "content": "You are
+      a helpful assistant."}, {"role": "user", "content": "What''s the capital of
+      America?"}]}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer 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
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '158'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - OpenAI/v1 PythonBindings/0.27.10
+      X-OpenAI-Client-User-Agent:
+      - '{"bindings_version": "0.27.10", "httplib": "requests", "lang": "python",
+        "lang_version": "3.11.5", "platform": "macOS-13.4-arm64-arm-64bit", "publisher":
+        "openai", "uname": "Darwin 22.5.0 Darwin Kernel Version 22.5.0: Mon Apr 24
+        20:53:19 PDT 2023; root:xnu-8796.121.2~5/RELEASE_ARM64_T6020 arm64 arm"}'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-85Dwuok3F0huMDm014v1zgkZfxKCo\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1696255952,\n  \"model\": \"gpt-4-0613\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": \"The capital of the United States of
+        America is Washington, D.C.\"\n      },\n      \"finish_reason\": \"stop\"\n
+        \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 24,\n    \"completion_tokens\":
+        14,\n    \"total_tokens\": 38\n  }\n}\n"
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 80fd8a75b9aeceb5-SJC
+      Cache-Control:
+      - no-cache, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 02 Oct 2023 14:12:33 GMT
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      access-control-allow-origin:
+      - '*'
+      alt-svc:
+      - h3=":443"; ma=86400
+      openai-model:
+      - gpt-4-0613
+      openai-organization:
+      - significant-gravitas
+      openai-processing-ms:
+      - '1263'
+      openai-version:
+      - '2020-10-01'
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-ratelimit-limit-requests:
+      - '200'
+      x-ratelimit-limit-tokens:
+      - '40000'
+      x-ratelimit-remaining-requests:
+      - '199'
+      x-ratelimit-remaining-tokens:
+      - '39967'
+      x-ratelimit-reset-requests:
+      - 300ms
+      x-ratelimit-reset-tokens:
+      - 49ms
+      x-request-id:
+      - 2c1a628aa60bb1900d02edeb22aea5e3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"input": "What''s the capital of America?"}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '43'
+      content-type:
+      - application/json
+      host:
+      - 127.0.0.1:8000
+      user-agent:
+      - python-httpx/0.25.0
+    method: POST
+    uri: http://127.0.0.1:8000/v1/b1/text_completions/
+  response:
+    content: '{"input":"What''s the capital of America?","id":1,"output":"The capital
+      of the United States of America is Washington, D.C."}'
+    headers:
+      content-length:
+      - '124'
+      content-type:
+      - application/json
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - 127.0.0.1:8000
+      user-agent:
+      - python-httpx/0.25.0
+    method: GET
+    uri: http://127.0.0.1:8000/v1/b1/text_completions/1/
+  response:
+    content: '{"input":"What''s the capital of America?","id":1,"output":"The capital
+      of the United States of America is Washington, D.C."}'
+    headers:
+      content-length:
+      - '124'
+      content-type:
+      - application/json
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - 127.0.0.1:8000
+      user-agent:
+      - python-httpx/0.25.0
+    method: GET
+    uri: http://127.0.0.1:8000/v1/b1/text_completions/
+  response:
+    content: '[{"input":"What''s the capital of America?","id":1,"output":"The capital
+      of the United States of America is Washington, D.C."}]'
+    headers:
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1

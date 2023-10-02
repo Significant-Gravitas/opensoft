@@ -7,9 +7,11 @@ type Module = {
   backend: string; // Add the backend property
 };
 
-
-
-function ModuleList({ onModuleChange }: { onModuleChange: (name: string, version: string, backend: string) => void }) {
+function ModuleList({
+  onModuleChange,
+}: {
+  onModuleChange: (name: string, version: string, backend: string) => void;
+}) {
   const [modules, setModules] = useState<Module[]>([]);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ function ModuleList({ onModuleChange }: { onModuleChange: (name: string, version
             <Link
               href={{
                 pathname: '/',
-                query: { name: module.name, version: module.version }
+                query: { name: module.name, version: module.version },
               }}
             >
               <span

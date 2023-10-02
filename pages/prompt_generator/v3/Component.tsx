@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import TextInput from '../../TextInput';
-import {useRouter} from "next/router"; // Update the path as needed
+import { useRouter } from 'next/router'; // Update the path as needed
 
 type Module = {
   name: string;
@@ -30,7 +30,6 @@ const Component: React.FC = () => {
       setSelectedModule(null); // Clear the previously selected module
     }
   }, [router.query]); // React to changes in the query object
-
 
   useEffect(() => {
     const updateSelectedModuleFromURL = () => {
@@ -88,7 +87,10 @@ const Component: React.FC = () => {
     }
   }, []);
 
-  const handleSubmit = async (goal: 'pass_tests' | 'pass_frontend_tests', e: FormEvent) => {
+  const handleSubmit = async (
+    goal: 'pass_tests' | 'pass_frontend_tests',
+    e: FormEvent,
+  ) => {
     e.preventDefault();
 
     // Clear previous message and prompt response
@@ -126,8 +128,12 @@ const Component: React.FC = () => {
             ? `${selectedModule.name}/${selectedModule.version}/${selectedModule.backend}`
             : 'Loading...'}
         </p>
-        <button onClick={(e) => handleSubmit('pass_tests', e)}>pass_tests</button>
-        <button onClick={(e) => handleSubmit('pass_frontend_tests', e)}>pass_frontend_tests</button>
+        <button onClick={(e) => handleSubmit('pass_tests', e)}>
+          pass_tests
+        </button>
+        <button onClick={(e) => handleSubmit('pass_frontend_tests', e)}>
+          pass_frontend_tests
+        </button>
       </form>
       {message && <div style={{ flexShrink: 0 }}>{message}</div>}
       {promptResponse && (

@@ -1,0 +1,13 @@
+Feature: User Feedback API
+
+  Scenario: Submitting Feedback
+    Given the user is authenticated
+    When the user submits feedback with valid content
+    Then the system should save the feedback
+    And acknowledge the user with a success message
+
+  Scenario: Submitting Feedback with invalid content
+    Given the user is authenticated
+    When the user submits feedback with invalid content
+    Then the system should reject the feedback
+    And inform the user about the invalid content

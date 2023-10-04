@@ -69,9 +69,23 @@ function App() {
     version: null,
   });
 
+  const handleLogout = async () => {
+  console.log("Logging out...");
+  alert('You have been logged out!');
+  await router.push('/');
+  console.log("Should have redirected by now.");
+};
+
+
+
+
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <h1>Iterface</h1>
+      <h1>QA Agent</h1>
+      <button onClick={handleLogout} style={{ position: 'absolute', top: '10px', right: '10px' }}>
+        Log Out
+      </button>
       <div
         style={{
           display: 'flex',

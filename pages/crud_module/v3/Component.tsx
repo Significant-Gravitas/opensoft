@@ -73,7 +73,7 @@ function ModuleList() {
                   // Directly update the URL here
                   router.push(
                     {
-                      pathname: '/',
+                      pathname: '/dashboard/',
                       query: {
                         name: module.name,
                         version: module.version,

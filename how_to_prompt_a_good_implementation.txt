@@ -1,1 +1,0 @@
-Ask to use SQLModel for persistence

@@ -1,6 +1,0 @@
-[MESSAGES CONTROL]
-disable=all
-enable=too-many-lines
-
-[DESIGN]
-max-statements=10

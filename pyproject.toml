@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "src"
+name = "opensoft"
 version = "0.0.9"
 description = "Benchmarking the performance of agents far and wide, regardless of how they are set up and how they work"
 authors = ["Silen Naihin <silen.naihin@gmail.com>"]
@@ -75,7 +75,7 @@ filterwarnings = [
 ]
 
 [tool.poetry.scripts]
-run = "src.run:run"
+run = "pages.run:run"
 
 [tool.black]
 line-length = 88

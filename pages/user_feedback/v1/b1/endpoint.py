@@ -9,13 +9,11 @@ router = APIRouter()
 
 @router.post("/user_feedback/", response_model=FeedbackRead)
 async def feedback(feedback_data: FeedbackCreate):
+    feedback = Feedback(**feedback_data.dict())
     with Session(engine) as session:
-        # Create Feedback instance
-        feedback_instance = Feedback(
-            user_id=feedback_data.user_id, content=feedback_data.content
-        )
-        session.add(feedback_instance)
+        session.add(feedback)
         session.commit()
-        session.refresh(feedback_instance)
-
-    return feedback_instance
+        session.refresh(feedback)
+        if feedback.id is None:
+            raise HTTPException(status_code=400, detail="Feedback could not be saved")
+    return feedback

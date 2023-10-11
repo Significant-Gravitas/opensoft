@@ -14,6 +14,7 @@ async def test_module_lifecycle(client):
     module_path = f"./pages/{module_name}"
     if os.path.exists(module_path):
         shutil.rmtree(module_path)
+    
 
     # 0. List modules before creating
     response = await client.get(f"/modules/?name={module_name}")
